@@ -1,0 +1,11 @@
+<div class="spot-image-container">
+	<div style="width:{{ width }}px;height:{{ height }}px;" class="spot-images">
+	<ul rn-carousel rn-carousel-index="vm.slideIndex" class="spot-image text-center" style="height:{{ height }}px;">
+		<li ng-repeat="image in vm.spot.media" class="spot-image" style="background-image:url({{ image.url }}/{{ width }}/{{ height }}/fit_to_height);">
+      	</li>
+	</ul>
+	</div>
+	<div class="text-center img-thumb-container">
+		<img ng-repeat="image in vm.spot.media" ng-src="{{ image.url }}/60/40/crop" class="img-thumb" ng-click="vm.slideIndex=$index" style="padding: 0 10px" ng-class="{'img-thumb-active': vm.slideIndex == $index}" />
+	</div>
+</div>

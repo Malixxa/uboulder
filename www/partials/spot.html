@@ -1,0 +1,61 @@
+
+<div class="row">
+  <div class="pull-right edit">
+    <a href="#/edit/{{ vm.spot.id }}"><i class="ion-edit"></i> {{ 'SPOT_WIDGET_EDIT' | translate }}</a>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-20">
+    <h1 class="ad-detail"><a ng-back></a> {{ vm.spot.title }} </h1>
+  </div> 
+
+</div>
+
+<div class="row">
+  <div class="col-sm-5 pull-right">
+    <address itemprop="address">
+      <i class="ion-android-location"></i> {{ vm.spot.address.zip }} {{ vm.spot.address.city }}
+    </address>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-20" ng-if="vm.offlineService.isOnline()" id="spot-images">
+    <widget-img images="vm.spot.media" ng-if="vm.hasImage"></widget-img>
+    <img src="/assets/img/herobg_.png" height="300" ng-if="!vm.hasImage" class="img-responsive">
+  </div>
+  <div ng-if="vm.offlineService.isOffline()" class="col-sm-20" id="spot-images-offline">
+    <img src="/assets/img/carousel_offline.png" height="300" class="img-responsive">
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-10">
+      <p itemprop="description">{{ vm.spot.description }}</p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-20">
+    <hr class="no-mrg-bt">
+  </div>
+</div>
+
+<div class="row" ng-if="vm.spot.pricing.length > 0">
+  <div class="col-sm-10">
+    <h2 class="ad-detail">{{ 'PRICING' | translate }}</h2>
+    <table class="table table-condensed">
+      <tr ng-repeat="pricing in vm.spot.pricing">
+        <td><strong>{{ pricing.description }}</strong></td>
+        <td>€ {{ pricing.amount }}</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-20">
+      <div id="map" style="height:250px"></div>
+  </div>
+</div>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title>uBoulder</title>
+
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/leaflet.css">
+    <link rel="stylesheet" type="text/css" href="app/bower_components/angular-carousel/dist/angular-carousel.min.css" />
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
+
+    <!-- your app's js -->
+    <script type="text/javascript">
+	var LANGUAGE = "en";
+    </script>
+    <script type="text/javascript" src="http://localhost:9000/js/jsRoutes"></script>
+    <script type="text/javascript" src="app/bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="app/bower_components/localforage/dist/localforage.min.js"></script>
+    <script type="text/javascript" src="app/bower_components/fastclick/lib/fastclick.js"></script>
+    <script type="text/javascript" src="app/bower_components/angular-route/angular-route.min.js"></script>
+    <script type="text/javascript" src="app/bower_components/angular-resource/angular-resource.min.js"></script>
+    <script type="text/javascript" src="app/bower_components/ng-file-upload/angular-file-upload.min.js"></script>
+    <script type="text/javascript" src="app/bower_components/angular-touch/angular-touch.min.js"></script>
+    <script type="text/javascript" src="app/bower_components/angular-carousel/dist/angular-carousel.min.js"></script>
+    <script type="text/javascript" src="app/bower_components/angulartics/dist/angulartics.min.js"></script>
+    <script type="text/javascript" src="app/bower_components/angulartics/dist/angulartics-ga.min.js"></script>
+    <script type="text/javascript" src="app/bower_components/angular-translate/angular-translate.min.js"></script>
+    <script type="text/javascript" src="app/bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js"></script>
+    <script type="text/javascript" src="app/bower_components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
+    <script type="text/javascript" src="javascripts/directives.js"></script>
+    <script type="text/javascript" src="javascripts/mobilemenu.js"></script>
+    <script type="text/javascript" src="javascripts/leaflet.js"></script>
+    <script type="text/javascript" src="app/config/data.json"></script>
+    <script type="text/javascript" src="app/app.js"></script>
+  </head>
+  <body ng-app="ub">
+    <div id="sp-nav-l">
+    <div id="innermenu">
+        <a ng-href="#/home" ng-click="$spMenu.hide()">
+            <button class="btn btn-lg btn-block btn-default">
+                <i class="ion-home"></i> {{ 'START' | translate }}
+            </button>
+        </a>
+        <hr>
+        <a href="#/new" ng-click="$spMenu.hide()">
+            <button class="btn btn-lg btn-block btn-success">
+                <i class="ion-compose"></i> <span class="tl_submitSpace">{{ 'SUBMIT' | translate }}</span>
+            </button>
+        </a>
+        <hr>
+        <a href="#/about" ng-click="$spMenu.hide()">
+            <button class="btn btn-lg btn-block btn-default">
+                <span class="tl_submitSpace">{{ 'ABOUT' | translate }}</span>
+            </button>
+        </a>
+    </div>
+</div>
+
+<div id="sp-page">
+    <div class="container">
+        <div class="navbar navbar-default navbar-top" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" ng-click="$spMenu.toggle()">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand visible-xs pull-right" href="/">
+                        {{ 'SITENAME' | translate }}
+                    </a>
+                </div>
+
+            </div>
+        </div>
+        <div class="alert alert-danger text-center" id="offline" onclick="location.reload();">
+            <i class="ion-alert-circled"></i> <strong>{{ 'OFFLINE_TAP' | translate }}</strong>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div ng-view></div>
+        <!-- /MAIN CONTENT -->
+
+    </div>
+</div>
+  </body>
+</html>

@@ -1,0 +1,74 @@
+{
+	"BOULDER": "Boulder area",
+	"CLIMBING": "Climbing area",
+	"ROCK": "Rock climbing",
+	"OUTDOOR": "Outdoor",
+	"INDOOR": "Indoor",
+	"URBAN": "Urban Boulder",
+
+	"START": "Start",
+	"SUBMIT": "Create Spot",
+	"ABOUT": "About",
+	"SITENAME": "uBoulder",
+	"OFFLINE_TAP": "You are offline. Tap to reload.",
+
+	"HOME_NEARBY": "Find nearby spots",
+	"HOME_CITY": "Search by city",
+	"HOME_RADIUS": "Radius (in km)",
+	"HOME_FIND": "Find spots!",
+	"HOME_NO_ENTRIES": "Sorry :( No spots found.",
+	"HOME_LOAD": "Load more.",
+
+	"PRICING": "Pricing",
+	"PRICE": "Price",
+	"PRICING_INFO": "Please provide some pricing infos, if it's not for free!",
+	"INFRASTRUCTURE": "Infrastructure",
+
+	"OFFLINE": "This content is not available in offline mode.",
+	"OFFLINE_INFO": "You are offline. Tap to reload.",
+
+	"NEW_NEWSPOT": "Create a new spot",
+	"NEW_BASIC_INFO": "Basic Info",
+	"NEW_INFO_TEXT": "Write some lines about the spot.",
+	"NEW_TITLE": "Title",
+	"NEW_DESCRIPTION": "Description",
+	"NEW_CHAR": "Characters left",
+	"NEW_PICTURE": "Pictures",
+	"NEW_IMPORTANT": "",
+	"NEW_FILE_SIZE": "",
+	"NEW_REMOVE": "Remove",
+	"NEW_ADD_PICTURE": "Add Picture",
+	"NEW_LOCATION": "Location",
+	"NEW_ADD_PRODUCT": "Add product",
+	"NEW_NEXT_STEP": "Next step: ",
+	"NEW_SUMMARY": "Summary",
+	"NEW_PRODUCT_NAME": "Product name / unit",
+	"NEW_SAVE": "Save",
+	"NEW_IMPORTANT": "Important",
+	"NEW_FILE_SIZE": "Maximum File Size 10MB",
+
+	"SPOT_WIDGET_EDIT": "Edit",
+
+	"IMPRINT": "Imprint",
+	"IMPRINT_OWNER": "Owner",
+	"IMPRINT_NOTE": "Note",
+	"IMPRINT_NOTE_TEXT": "is keen to keep all data - including links - up to date. On the part of uBoulder, we cannnot guarantee for data that has altered since the website has been updated. We assume no liability whatsoever with respect to the accuracy and completeness of the information presented on this website and disclaim all liability arising out of the use of such information and data.",
+	"IMPRINT_PRIVACY": "Privacy & Terms",
+	"IMPRINT_PRIVACY_NOTE": "Please find any further informations in our",
+	"IMPRINT_TERMS": "Terms of Service",
+
+	"ABOUT": "About",
+	"DONATE": "Donate",
+	"DONATE_TXT": "If you like this project, please consider making a donation. I'm doing this in my FREE-time.",
+	"DONATE_TXT_2": "I appreciate any kind of donations, like",
+	"DONATE_TXT_3": "or",
+	"BTC": "Bitcoin",
+	"LTC": "Litecoin",
+	"DOGE": "Dogecoin",
+	"PAYPAL": "PayPal"
+
+
+
+
+
+} 

@@ -1,0 +1,40 @@
+<div class="jumbotron">
+  <div>
+    <div class="btn-group btn-group-justified">
+      <div class="btn-group btn-group-lg">
+        <button type="button" class="btn" ng-class="{'btn-success': vm.choose == 0}" ng-click="vm.choose = 0">{{ 'HOME_NEARBY' | translate }}</button> 
+      </div>
+      <div class="btn-group btn-group-lg">
+        <button type="button" class="btn" ng-class="{'btn-success': vm.choose == 1}" ng-click="vm.choose = 1">{{ 'HOME_CITY' | translate }}</button>
+      </div>
+    </div>
+    <form ng-show="vm.choose == 0" class="form-inline search">
+      <span class="range-number">{{ 'HOME_RADIUS' | translate }}:</span>  <input type="number" class="form-control" ng-model="vm.radius">
+      
+      <div id="radius">
+        <span class="range-number">0</span>
+        <input type="range" class="range" name="radius" ng-change="vm.parseRadius()" ng-model="vm.radius" min="1" max="25" step="1">
+        <span class="range-number">25</span>
+      </div>
+
+      <button class="btn btn-find" type="submit" ng-click="vm.reset()"><i class="ion-search"></i> {{'HOME_FIND' | translate }}</button>
+    </form>
+    <form ng-show="vm.choose == 1" class="form-inline search" name="findForm">  
+      <input type="text" name="city" class="form-control" ng-model="vm.phrase" required>    
+      <button class="btn btn-find btn-find-city" type="submit" ng-click="vm.reset()" ng-disabled="vm.phrase < 1"><i class="ion-search"></i> {{'HOME_FIND' | translate }}</button>
+    </form>
+  </div>
+  <div class="cc">
+    "<a href="http://commons.wikimedia.org/wiki/File:Climbing_in_St._Lorenz_-_Wachau,_Austria.jpg#mediaviewer/File:Climbing_in_St._Lorenz_-_Wachau,_Austria.jpg">Climbing in St. Lorenz - Wachau, Austria</a>" by <a rel="nofollow" class="external text" href="http://www.flickr.com/people/86236226@N00">gego2605</a> - <a href="//commons.wikimedia.org/wiki/Flickr" title="Flickr" class="mw-redirect">Flickr</a>: <a rel="nofollow" class="external text" href="http://flickr.com/photos/86236226@N00/1277878607">nt-gummizwuftel</a>. Licensed under <a href="http://creativecommons.org/licenses/by-sa/2.0" title="Creative Commons Attribution-Share Alike 2.0">CC BY-SA 2.0</a> via <a href="//commons.wikimedia.org/wiki/">Wikimedia Commons</a>.
+  </div>
+</div>
+
+<widget ng-repeat="spot in vm.spots" spot="spot" ng-click="vm.redirect(spot.id)"></widget>
+<p ng-if="(vm.spots.length == 0) && !vm.loading" class="text-center">
+  {{ 'HOME_NO_ENTRIES' | translate }}
+</p>
+<div class="loading" ng-show="vm.loading"><i class="ion-refreshing"></i></div>
+<p class="text-center" ng-show="vm.showLoad">
+  <button ng-show="vm.choose == 0" ng-click="vm.loadNearby()" class="btn btn-lg"><i class="ion-refresh"></i> {{ 'HOME_LOAD' | translate }}</button>
+  <button ng-show="vm.choose == 1" ng-click="vm.loadByCity()" class="btn btn-lg"><i class="ion-refresh"></i> {{ 'HOME_LOAD' | translate }}</button>
+</p>

@@ -1,0 +1,13 @@
+<div class="container text-center" ng-controller="offlineCtrl">
+    <div class="alert alert-danger alert-offline-online text-center" onclick="location.reload();" ng-if="vm.offlineService.isOnline()">
+        <span class="fa-stack">
+            <i class="fa fa-circle fa-stack-2x"></i>
+        	<i class="fa fa-bolt fa-stack-1x fa-inverse"></i>
+        </span>{{'OFFLINE_INFO' | translate}}</a>
+    </div>
+    <span class="fa-stack strong">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-bolt fa-stack-1x fa-inverse"></i>
+    </span>
+    <span class="strong">{{'OFFLINE' | translate}}}</span>
+</div>
