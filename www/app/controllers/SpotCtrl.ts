@@ -64,7 +64,6 @@ module app {
                         this.http.get(jsRoutes.controllers.Application.retrieveSpot(id).absoluteURL()).success(
                             (data: Spot, status: any) => {
                                 var spot: Spot = data
-                                console.log(data)
                                 localforage.setItem(spot.id, spot)
                             }
                         ).error(
@@ -115,8 +114,17 @@ module app {
         private loadMap(): void {
             var lat: number = this.spot.address.position.lat
             var lng: number = this.spot.address.position.lon
+
+
             var map = L.map('map').setView([lat, lng], 13);
+
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 18
+            }).addTo(map)
+
             L.marker([lat, lng]).addTo(map)
+
         }
     }
 

@@ -5,6 +5,7 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <title>uBoulder</title>
 
+    <link rel="stylesheet" type="text/css" href="lib/ionic/css/ionic.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <link rel="stylesheet" type="text/css" href="css/leaflet.css">
     <link rel="stylesheet" type="text/css" href="app/bower_components/angular-carousel/dist/angular-carousel.min.css" />
@@ -23,9 +24,9 @@
 
     <!-- your app's js -->
     <script type="text/javascript">
-	var LANGUAGE = "en";
+	   var LANGUAGE = "en";
     </script>
-    <script type="text/javascript" src="http://localhost:9000/js/jsRoutes"></script>
+    <script type="text/javascript" src="javascripts/routes.js"></script>
     <script type="text/javascript" src="app/bower_components/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="app/bower_components/localforage/dist/localforage.min.js"></script>
     <script type="text/javascript" src="app/bower_components/fastclick/lib/fastclick.js"></script>
@@ -46,9 +47,17 @@
     <script type="text/javascript" src="app/app.js"></script>
   </head>
   <body ng-app="ub">
+    <ion-side-menus>
+          <!-- Center content -->
+          <ion-side-menu-content >
+          </ion-side-menu-content>
+
+          <ion-side-menu side="left">
+          </ion-side-menu>
+        </ion-side-menus>
     <div id="sp-nav-l">
     <div id="innermenu">
-        <a ng-href="#/home" ng-click="$spMenu.hide()">
+        <a href="#/home" ng-click="$spMenu.hide()">
             <button class="btn btn-lg btn-block btn-default">
                 <i class="ion-home"></i> {{ 'START' | translate }}
             </button>

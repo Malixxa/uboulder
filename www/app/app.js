@@ -103,6 +103,17 @@ var app;
                 _this.lon = data.coords.longitude;
                 _this.loadNearby();
             });
+
+            this.window.onscroll = function (ev) {
+                var height = $(window).innerHeight() + $(window).scrollTop();
+                var doc = $(document).height();
+                if ((height + 200 >= doc) && _this.showLoad) {
+                    if (_this.choose == 0)
+                        _this.loadNearby();
+                    else
+                        _this.loadByCity();
+                }
+            };
         }
         HomeCtrl.prototype.reset = function () {
             this.offset = 0;
@@ -132,8 +143,6 @@ var app;
                 _this.loading = false;
                 _this.offlineService.setOffline();
                 _this.loadOffline();
-                if (_this.window.confirm("Unfortunately an error occurred. Try again?"))
-                    _this.loadByCity();
             });
         };
 
@@ -141,7 +150,6 @@ var app;
             var _this = this;
             this.loading = true;
             this.http.get(jsRoutes.controllers.Application.findNearby(this.lat, this.lon, this.radius * 1000, this.offset).absoluteURL()).success(function (data, status) {
-                console.log(data);
                 _this.spots = _this.spots.concat(data);
                 _this.offset += 10;
                 _this.loading = false;
@@ -153,8 +161,6 @@ var app;
                 _this.loading = false;
                 _this.offlineService.setOffline();
                 _this.loadOffline();
-                if (_this.window.confirm("Unfortunately an error occurred. Try again?"))
-                    _this.loadNearby();
             });
         };
 
@@ -275,7 +281,6 @@ var app;
                 _this.location.path('/spot/' + _this.spot.id);
             }).error(function (data, status) {
                 _this.loading = false;
-                _this.window.alert("Unfortunately an error occurred. Please try again later.");
             });
         };
 
@@ -289,7 +294,6 @@ var app;
                 _this.spot = data;
                 _this.location.path('/spot/' + _this.spot.id);
             }).error(function (data, status) {
-                _this.window.alert("Unfortunately an error occurred. Please try again later.");
             });
         };
 
@@ -331,7 +335,6 @@ var app;
         };
 
         EditSpotCtrl.prototype.checkPosition = function () {
-            console.log(this.spot.address.position);
             if (this.spot.address.position.lat == 0 && this.spot.address.position.lon == 0) {
                 this.window.alert("no point set");
                 return false;
@@ -342,12 +345,17 @@ var app;
 
         EditSpotCtrl.prototype.createMap = function () {
             var _this = this;
-            var map = L.map('map').setView([51.505, -0.09], 13);
+            var map = L.map('map');
+
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 18
+            }).addTo(map);
+
             var marker = null;
 
             this.geoService.current().then(function (data) {
-                console.log(data);
-                map.setView([51.505, -0.09], 13);
+                map.setView([data.coords.latitude, data.coords.longitude], 13);
                 marker = L.marker([data.coords.latitude, data.coords.longitude]).addTo(map);
             });
 
@@ -359,8 +367,6 @@ var app;
                     marker.setLatLng(e.latlng);
                 else
                     marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
-
-                console.log(_this.spot.address.position);
             });
         };
         EditSpotCtrl.$inject = [
@@ -407,7 +413,6 @@ var app;
                     if (_this.offlineService.isOnline()) {
                         _this.http.get(jsRoutes.controllers.Application.retrieveSpot(id).absoluteURL()).success(function (data, status) {
                             var spot = data;
-                            console.log(data);
                             localforage.setItem(spot.id, spot);
                         }).error(function (data, status) {
                             // remove if doesn't exist anymore
@@ -451,7 +456,14 @@ var app;
         SpotCtrl.prototype.loadMap = function () {
             var lat = this.spot.address.position.lat;
             var lng = this.spot.address.position.lon;
+
             var map = L.map('map').setView([lat, lng], 13);
+
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 18
+            }).addTo(map);
+
             L.marker([lat, lng]).addTo(map);
         };
         SpotCtrl.$inject = [

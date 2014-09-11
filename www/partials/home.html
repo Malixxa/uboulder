@@ -1,3 +1,5 @@
+<a href="#/about">about</a>
+
 <div class="jumbotron">
   <div>
     <div class="btn-group btn-group-justified">
@@ -9,7 +11,7 @@
       </div>
     </div>
     <form ng-show="vm.choose == 0" class="form-inline search">
-      <span class="range-number">{{ 'HOME_RADIUS' | translate }}:</span>  <input type="number" class="form-control" ng-model="vm.radius">
+      <div class="range-number km">{{ 'HOME_RADIUS' | translate }}:</div>  <input type="number" class="form-control" ng-model="vm.radius">
       
       <div id="radius">
         <span class="range-number">0</span>

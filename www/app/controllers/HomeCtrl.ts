@@ -57,6 +57,17 @@ module app {
                 this.lon = data.coords.longitude
                 this.loadNearby()
             })
+
+            this.window.onscroll = (ev: any) => {
+                var height: number = <number>$(window).innerHeight() + <number>$(window).scrollTop()
+                var doc: number = <number>$(document).height()
+                if((height + 200 >= doc) && this.showLoad) {
+                    if(this.choose == 0)
+                        this.loadNearby()
+                    else
+                        this.loadByCity()
+                }
+            }
         }
 
         public reset(): void {
@@ -89,8 +100,6 @@ module app {
                     this.loading = false
                     this.offlineService.setOffline()
                     this.loadOffline()
-                    if(this.window.confirm("Unfortunately an error occurred. Try again?"))
-                        this.loadByCity()
                 }
             )
         }
@@ -99,7 +108,6 @@ module app {
             this.loading = true
         	this.http.get(jsRoutes.controllers.Application.findNearby(this.lat, this.lon, this.radius*1000, this.offset).absoluteURL()).success(
         		(data: any, status: any) => {
-                    console.log(data)
         			this.spots = this.spots.concat(<Array<Spot>>data)
         			this.offset += 10
                     this.loading = false
@@ -113,8 +121,6 @@ module app {
                     this.loading = false
                     this.offlineService.setOffline()
                     this.loadOffline()
-                    if(this.window.confirm("Unfortunately an error occurred. Try again?"))
-                        this.loadNearby()
                 }
         	)
         }

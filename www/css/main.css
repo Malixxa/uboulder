@@ -5,6 +5,11 @@
 	vertical-align: middle;
 }
 
+.alert {
+	padding: 10px;
+	margin: 10px;
+}
+
 .jumbotron {
 	padding: 20px;
 }
@@ -13,8 +18,10 @@
 	padding: 20px;
 }
 
+
+
 .range {
-	width: 80% !important;
+	width: 70% !important;
 	text-align: center;
 	display: inline-block !important;
 	vertical-align: middle;
@@ -28,6 +35,14 @@
 	background-color: rgba(180,180,180,0.8);
 	padding: 5px;
 	border-radius: 5px;
+}
+
+input[type="number"],input[type="text"] {
+	padding: 5px 10px;
+}
+
+.km {
+	margin-bottom: 5px;
 }
 
 #radius {

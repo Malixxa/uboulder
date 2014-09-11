@@ -114,7 +114,6 @@ module app {
             }).error(
                 (data: any, status: number) => {
                     this.loading = false
-                    this.window.alert("Unfortunately an error occurred. Please try again later.")
             })
         }
 
@@ -129,9 +128,7 @@ module app {
                         this.location.path('/spot/'+this.spot.id)
                     }
                 ).error(
-                    (data: any, status: number) => {
-                        this.window.alert("Unfortunately an error occurred. Please try again later.")
-                    }
+                    (data: any, status: number) => {}
                 )
         }
 
@@ -176,7 +173,6 @@ module app {
         }   
 
         private checkPosition(): boolean {
-            console.log(this.spot.address.position)
             if(this.spot.address.position.lat == 0 && this.spot.address.position.lon == 0) {
                 this.window.alert("no point set")
                 return false
@@ -186,12 +182,17 @@ module app {
         }
 
         private createMap(): void {
-            var map = L.map('map').setView([51.505, -0.09], 13);
+            var map = L.map('map')
+
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 18
+            }).addTo(map);
+
             var marker = null
 
             this.geoService.current().then((data: any) => {
-                console.log(data)
-                map.setView([51.505, -0.09], 13);
+                map.setView([data.coords.latitude, data.coords.longitude], 13);
                 marker = L.marker([data.coords.latitude, data.coords.longitude]).addTo(map)
             })
 
@@ -203,8 +204,6 @@ module app {
                     marker.setLatLng(e.latlng)
                 else
                     marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map)
-
-                console.log(this.spot.address.position)
             });
         }     
     }
