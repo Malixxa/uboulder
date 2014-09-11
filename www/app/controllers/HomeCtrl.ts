@@ -126,7 +126,7 @@ module app {
         }
 
         public redirect(id: string): void {
-            this.location.path('/spot/'+id)
+            this.location.path('/app/spot/'+id)
         }
 
         private loadOffline(): void {

@@ -56,6 +56,7 @@ module app {
         }
 
         private loadSpot(id: string): void {
+            console.log(id)
             localforage.getItem(id, (spot: Spot) => {
                 this.spot = spot
                 if(this.spot) {
@@ -70,7 +71,7 @@ module app {
                             (data: any, status: any) => {
                                 // remove if doesn't exist anymore
                                 localforage.removeItem(spot.id)
-                                this.location.path('/404')
+                                this.location.path('/app/404')
                             }
                         )
                     }
@@ -89,14 +90,14 @@ module app {
                         if(this.spot.active)
                             this.loadFinish()
                         else
-                            this.location.path('/404')
+                            this.location.path('/app/404')
                     } else {  
-                        this.location.path('/404').replace()     
+                        this.location.path('/app/404').replace()     
                     }
                 }
             ).error(
                 (data: any, status: any) => {
-                    this.location.path('/404').replace()
+                    this.location.path('/app/404').replace()
                 }
             ) 
         }

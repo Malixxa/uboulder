@@ -71,6 +71,19 @@ var app;
     app.Pricing = Pricing;
 })(app || (app = {}));
 /// <reference path='../_all.ts' />
+var app;
+(function (app) {
+    'use strict';
+
+    var MenuCtrl = (function () {
+        function MenuCtrl() {
+        }
+        MenuCtrl.$inject = [];
+        return MenuCtrl;
+    })();
+    app.MenuCtrl = MenuCtrl;
+})(app || (app = {}));
+/// <reference path='../_all.ts' />
 
 var app;
 (function (app) {
@@ -165,7 +178,7 @@ var app;
         };
 
         HomeCtrl.prototype.redirect = function (id) {
-            this.location.path('/spot/' + id);
+            this.location.path('/app/spot/' + id);
         };
 
         HomeCtrl.prototype.loadOffline = function () {
@@ -215,6 +228,7 @@ var app;
             this.infrastructure = INFRASTRUCTURE;
 
             var id = ($routeParams.id || "new");
+            console.log(id);
             if (id === "new")
                 this.createSpot();
             else
@@ -278,7 +292,7 @@ var app;
 
             this.http.post(jsRoutes.controllers.Application.createSpot().absoluteURL(), this.spot).success(function (data, status) {
                 _this.spot = data;
-                _this.location.path('/spot/' + _this.spot.id);
+                _this.location.path('/app/spot/' + _this.spot.id);
             }).error(function (data, status) {
                 _this.loading = false;
             });
@@ -292,7 +306,7 @@ var app;
 
             this.http.put(jsRoutes.controllers.Application.updateSpot().absoluteURL(), this.spot).success(function (data, status) {
                 _this.spot = data;
-                _this.location.path('/spot/' + _this.spot.id);
+                _this.location.path('/app/spot/' + _this.spot.id);
             }).error(function (data, status) {
             });
         };
@@ -328,9 +342,9 @@ var app;
             this.http.get(jsRoutes.controllers.Application.retrieveSpot(id).absoluteURL()).success(function (data, status) {
                 _this.spot = data;
                 if (!_this.spot)
-                    _this.location.path('/404').replace();
+                    _this.location.path('/app/404').replace();
             }).error(function (data, status) {
-                _this.location.path('/404').replace();
+                _this.location.path('/app/404').replace();
             });
         };
 
@@ -406,6 +420,7 @@ var app;
         }
         SpotCtrl.prototype.loadSpot = function (id) {
             var _this = this;
+            console.log(id);
             localforage.getItem(id, function (spot) {
                 _this.spot = spot;
                 if (_this.spot) {
@@ -417,7 +432,7 @@ var app;
                         }).error(function (data, status) {
                             // remove if doesn't exist anymore
                             localforage.removeItem(spot.id);
-                            _this.location.path('/404');
+                            _this.location.path('/app/404');
                         });
                     }
                     _this.loadFinish();
@@ -434,12 +449,12 @@ var app;
                     if (_this.spot.active)
                         _this.loadFinish();
                     else
-                        _this.location.path('/404');
+                        _this.location.path('/app/404');
                 } else {
-                    _this.location.path('/404').replace();
+                    _this.location.path('/app/404').replace();
                 }
             }).error(function (data, status) {
-                _this.location.path('/404').replace();
+                _this.location.path('/app/404').replace();
             });
         };
 
@@ -539,7 +554,7 @@ var app;
 
     var OfflineService = (function () {
         function OfflineService($rootScope) {
-            this.offline = true;
+            this.offline = false;
             this.rootScope = $rootScope;
         }
         OfflineService.prototype.setOnline = function () {
@@ -571,6 +586,7 @@ var app;
     app.OfflineService = OfflineService;
 })(app || (app = {}));
 /// <reference path='../_all.ts' />
+
 var app;
 (function (app) {
     'use strict';
@@ -617,13 +633,13 @@ var app;
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
                 this.myScope.upload = this.upload.upload({
-                    url: '/upload',
+                    url: SERVER + '/upload',
                     method: 'POST',
                     file: file
                 }).progress(function (evt) {
                     return console.log('percent: ' + 100.0 * evt.loaded / evt.total);
                 }).success(function (data, status, headers, config) {
-                    var url = "/res/" + data.url;
+                    var url = SERVER + "/res/" + data.url;
                     _this.myScope.picture.url = url;
                     _this.loading = false;
                 }).error(function () {
@@ -725,13 +741,24 @@ var app;
     'use strict';
 
     var ub = angular.module('ub', [
-        'ngRoute', 'ngResource',
-        'shoppinpal.mobile-menu', 'ng-back', 'angularFileUpload',
-        'filters', 'angular-carousel', 'angulartics',
+        'ngRoute', 'ngResource', 'ionic',
+        'ng-back', 'angularFileUpload', 'filters', 'angular-carousel', 'angulartics',
         'angulartics.google.analytics', 'pascalprecht.translate',
         'geolocation']);
 
+    ub.run(function ($ionicPlatform) {
+        $ionicPlatform.ready(function () {
+            if (window.cordova && window.cordova.plugins.Keyboard) {
+                cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+            }
+            if (window.StatusBar) {
+                StatusBar.styleDefault();
+            }
+        });
+    });
+
     ub.controller('homeCtrl', app.HomeCtrl);
+    ub.controller('menuCtrl', app.MenuCtrl);
     ub.controller('editSpotCtrl', app.EditSpotCtrl);
     ub.controller('spotCtrl', app.SpotCtrl);
 
@@ -742,10 +769,70 @@ var app;
     ub.directive('widget', app.Widget.prototype.injection());
     ub.directive('widgetImg', app.WidgetImg.prototype.injection());
 
-    ub.config([
-        '$routeProvider', function ($routeProvider) {
-            $routeProvider.when('/home', { templateUrl: 'partials/home.html', controller: 'homeCtrl' }).when('/new', { templateUrl: 'partials/new.html', controller: 'editSpotCtrl' }).when('/edit/:id', { templateUrl: 'partials/new.html', controller: 'editSpotCtrl' }).when('/spot/:id', { templateUrl: 'partials/spot.html', controller: 'spotCtrl' }).when('/imprint', { templateUrl: 'partials/footer/imprint.html' }).when('/about', { templateUrl: 'partials/footer/about.html' }).when('/terms', { templateUrl: 'partials/footer/terms.html' }).when('/404', { templateUrl: 'partials/404.html' }).otherwise({ redirectTo: '/home' });
-        }]);
+    ub.config(function ($stateProvider, $urlRouterProvider) {
+        $stateProvider.state('app', {
+            url: "/app",
+            abstract: true,
+            templateUrl: "partials/menu.html",
+            controller: "menuCtrl"
+        }).state('app.home', {
+            url: "/home",
+            views: {
+                'menuContent': {
+                    templateUrl: "partials/home.html",
+                    controller: 'homeCtrl'
+                }
+            }
+        }).state('app.new', {
+            url: "/new",
+            views: {
+                'menuContent': {
+                    templateUrl: "partials/new.html",
+                    controller: 'editSpotCtrl'
+                }
+            }
+        }).state('app.edit', {
+            url: "/edit/:id",
+            views: {
+                'menuContent': {
+                    templateUrl: "partials/new.html",
+                    controller: 'editSpotCtrl'
+                }
+            }
+        }).state('app.spot', {
+            url: "/spot/:id",
+            views: {
+                'menuContent': {
+                    templateUrl: "partials/spot.html",
+                    controller: 'spotCtrl'
+                }
+            }
+        }).state('app.404', {
+            url: "/404",
+            views: {
+                'menuContent': {
+                    templateUrl: "partials/404.html"
+                }
+            }
+        }).state('app.about', {
+            url: "/about",
+            views: {
+                'menuContent': {
+                    templateUrl: "partials/footer/about.html"
+                }
+            }
+        }).state('app.terms', {
+            url: "/terms",
+            views: {
+                'menuContent': {
+                    templateUrl: "partials/footer/terms.html"
+                }
+            }
+        });
+
+        // if none of the above states are matched, use this as the fallback
+        $urlRouterProvider.otherwise('/app/home');
+    });
 
     ub.config([
         '$translateProvider', function ($translateProvider) {
@@ -768,6 +855,7 @@ var app;
 })(app || (app = {}));
 /// <reference path='typings/tsd.d.ts' />
 /// <reference path='models/Spot.ts' />'
+/// <reference path='controllers/MenuCtrl.ts' />
 /// <reference path='controllers/HomeCtrl.ts' />
 /// <reference path='controllers/EditSpotCtrl.ts' />
 /// <reference path='controllers/SpotCtrl.ts' />

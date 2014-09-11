@@ -8,7 +8,7 @@ module app {
         static $inject: Array<string> = ['$rootScope']
 
         private rootScope: ng.IRootScopeService
-    	private offline: boolean = true
+    	private offline: boolean = false
 
     	constructor($rootScope: ng.IRootScopeService) {
             this.rootScope = $rootScope

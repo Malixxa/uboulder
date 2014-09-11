@@ -1,5 +1,7 @@
 /// <reference path='../_all.ts' />
 
+declare var SERVER
+
 module app {
     'use strict'
     
@@ -58,14 +60,14 @@ module app {
             for (var i = 0; i < files.length; i++) {
                 var file = files[i]
                 this.myScope.upload = this.upload.upload({
-                    url: '/upload',
+                    url: SERVER+'/upload',
                     method: 'POST',
                     file: file,
                 }).progress(
                     (evt) => console.log('percent: ' + 100.0 * evt.loaded / evt.total)
                 ).success(
                     (data, status, headers, config) => {
-                        var url: string = "/res/"+data.url
+                        var url: string = SERVER+"/res/"+data.url
                         this.myScope.picture.url = url
                         this.loading = false
                     }

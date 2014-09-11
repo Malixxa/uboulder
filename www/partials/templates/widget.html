@@ -1,14 +1,14 @@
 <div class="ad panel panel-default">
   <div class="panel-body">
     <div class="col-xs-3 no-pad">
-      <a ng-href="#/spot/{{ spot.id }}">
+      <a ng-href="#/app/spot/{{ spot.id }}">
         <img class="img-responsive" ng-src="{{ spot.image }}/128/128/crop" ng-if="spot.hasImage">
-        <img class="img-responsive" ng-src="/assets/images/default-icon.png" ng-if="!spot.hasImage">
+        <img class="img-responsive" ng-src="images/default-icon.png" ng-if="!spot.hasImage">
       </a>
     </div>
     <div class="col-xs-17">
       <h2>
-        <a ng-href="#/spot/{{ spot.id }}"> {{ spot.title }}</a>
+        <a ng-href="#/app/spot/{{ spot.id }}"> {{ spot.title }}</a>
       </h2>
       <span class="hidden-xs">{{ spot.description|truncate:200 }}</span>
       <ul>

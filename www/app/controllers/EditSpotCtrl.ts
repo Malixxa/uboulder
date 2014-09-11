@@ -48,6 +48,7 @@ module app {
             this.infrastructure = INFRASTRUCTURE
 
             var id: string = ($routeParams.id || "new")
+            console.log(id)
             if(id === "new") 
                 this.createSpot()
             else 
@@ -110,7 +111,7 @@ module app {
             this.http.post(jsRoutes.controllers.Application.createSpot().absoluteURL(), this.spot).success(
                 (data: Spot, status: any) => {
                     this.spot = data
-                    this.location.path('/spot/'+this.spot.id)
+                    this.location.path('/app/spot/'+this.spot.id)
             }).error(
                 (data: any, status: number) => {
                     this.loading = false
@@ -125,7 +126,7 @@ module app {
             this.http.put(jsRoutes.controllers.Application.updateSpot().absoluteURL(), this.spot).success(
                     (data: Spot, status: any) => {
                         this.spot = data
-                        this.location.path('/spot/'+this.spot.id)
+                        this.location.path('/app/spot/'+this.spot.id)
                     }
                 ).error(
                     (data: any, status: number) => {}
@@ -163,11 +164,11 @@ module app {
                 (data: Spot, status: any) => {
                     this.spot = data
                     if(!this.spot) 
-                        this.location.path('/404').replace()     
+                        this.location.path('/app/404').replace()     
                 }
             ).error(
                 (data: any, status: number) => {
-                    this.location.path('/404').replace()
+                    this.location.path('/app/404').replace()
                 }
             ) 
         }   

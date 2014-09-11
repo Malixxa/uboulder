@@ -2,6 +2,7 @@
 
 /// <reference path='models/Spot.ts' />'
 
+/// <reference path='controllers/MenuCtrl.ts' />
 /// <reference path='controllers/HomeCtrl.ts' />
 /// <reference path='controllers/EditSpotCtrl.ts' />
 /// <reference path='controllers/SpotCtrl.ts' />
