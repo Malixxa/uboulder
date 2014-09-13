@@ -3,6 +3,7 @@
 declare var LANGUAGE
 declare var cordova
 declare var StatusBar
+declare var SERVER
 
 module app {
     'use strict'
@@ -10,7 +11,7 @@ module app {
     var ub = angular.module('ub', ['ngRoute','ngResource', 'ionic',
         'ng-back','angularFileUpload', 'filters','angular-carousel', 'angulartics',
         'angulartics.google.analytics','pascalprecht.translate',
-        'geolocation'])
+        'geolocation','leaflet-directive'])
 
     ub.run(function($ionicPlatform) {
         $ionicPlatform.ready(function() {
@@ -27,6 +28,7 @@ module app {
     ub.controller('menuCtrl', MenuCtrl)
     ub.controller('editSpotCtrl', EditSpotCtrl)
     ub.controller('spotCtrl', SpotCtrl)
+    ub.controller('locationCtrl', LocationCtrl)
 
     ub.service('geoService', GeoService)
     ub.service('offlineService', OfflineService)
@@ -93,6 +95,15 @@ module app {
           }
         })
 
+        .state('app.offline', {
+          url: "/offline",
+          views: {
+            'menuContent' :{
+              templateUrl: "partials/offline.html"
+            }
+          }
+        })
+
         .state('app.about', {
           url: "/about",
           views: {
@@ -123,13 +134,16 @@ module app {
 
     ub.run(['$rootScope','$http','offlineService',function($rootScope: any, $http: ng.IHttpService,
         offlineService: app.OfflineService){
-        $rootScope.$on('$routeChangeStart', function (event, next, current) {
-            $http.get("http://localhost:9000/ping").success(
+        console.log("run")
+        $rootScope.$on('$stateChangeStart', function (event, next, current) {
+            $http.get(SERVER+"/ping").success(
                 (data: any, status: any) => {
+                    console.log("online")
                     offlineService.setOnline()
                 }
             ).error(
                 (data: any, status: any) => {
+                    console.log("offline")
                     offlineService.setOffline()
                 }
             )

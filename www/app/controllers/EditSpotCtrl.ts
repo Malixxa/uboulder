@@ -12,7 +12,7 @@ module app {
     	spotForm: ng.IFormController
     }
 
-    export interface IEditSpotParams extends ng.route.IRouteParamsService {
+    export interface IEditSpotParams {
     	id: string
     }
 
@@ -26,33 +26,40 @@ module app {
 	    private scope: app.IEditSpotScope
         private window: ng.IWindowService
         private geoService: app.GeoService
+        private offlineService: app.OfflineService
         private media: Array<app.Media> = new Array<app.Media>()
         private pricing: Array<app.Pricing> = new Array<app.Pricing>()
         
         private loading: boolean = false
         private edit: boolean = false
+        private pointSet: boolean = false
       
-        static $inject: Array<string> = ['$scope','$routeParams','$http','$location',
-            '$window','$timeout','geoService']
+        static $inject: Array<string> = ['$scope','$stateParams','$http','$location',
+            '$window','$timeout','geoService', 'offlineService']
 
-        constructor($scope: app.IEditSpotScope, $routeParams: app.IEditSpotParams,
+        constructor($scope: app.IEditSpotScope, $stateParams: app.IEditSpotParams,
         	$http: ng.IHttpService, $location: ng.ILocationService, 
         	$window: ng.IWindowService, $timeout: ng.ITimeoutService,
-            geoService: app.GeoService) {  
+            geoService: app.GeoService, offlineService: app.OfflineService) {  
         	$scope.vm = this
         	this.scope = $scope
         	this.http = $http
         	this.location = $location
             this.window = $window
             this.geoService = geoService
+            this.offlineService = offlineService
             this.infrastructure = INFRASTRUCTURE
 
-            var id: string = ($routeParams.id || "new")
-            console.log(id)
-            if(id === "new") 
-                this.createSpot()
-            else 
-                this.loadSpot(id)
+            if(this.offlineService.isOnline()) {
+                var id: string = ($stateParams.id || "new")
+
+                if(id === "new") 
+                    this.createSpot()
+                else 
+                    this.loadSpot(id)
+            } else {
+                this.location.path('/app/offline')
+            }
 
             this.scope.$on('geocode', (e: any, address: app.Address, error: string) => this.geocodeFinished(address, error))
         }
@@ -74,10 +81,8 @@ module app {
         }
 
         public showSummary(): void {
-            if(this.scope.spotForm.$valid && this.checkPosition()) {
-                this.loading = true
-                this.geoService.geocode(this.spot.address)
-            }
+            this.loading = true
+            this.geoService.geocode(this.spot.address)
         }
 
         public toggleInfrastructure(elem: string): boolean {
@@ -160,6 +165,7 @@ module app {
 
         private loadSpot(id: string): void {
             this.edit = true
+            this.pointSet = true
             this.http.get(jsRoutes.controllers.Application.retrieveSpot(id).absoluteURL()).success(
                 (data: Spot, status: any) => {
                     this.spot = data
@@ -173,39 +179,36 @@ module app {
             ) 
         }   
 
-        private checkPosition(): boolean {
-            if(this.spot.address.position.lat == 0 && this.spot.address.position.lon == 0) {
-                this.window.alert("no point set")
-                return false
-            } else {
-                return true
-            }
-        }
-
         private createMap(): void {
             var map = L.map('map')
+            var marker = null
 
             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
                 maxZoom: 18
             }).addTo(map);
 
-            var marker = null
-
             this.geoService.current().then((data: any) => {
                 map.setView([data.coords.latitude, data.coords.longitude], 13);
-                marker = L.marker([data.coords.latitude, data.coords.longitude]).addTo(map)
             })
 
+            this.addClickHandler(map, marker);
+
+            map.on('blur', (e: any) => this.addClickHandler(map, marker))
+            map.on('focus', (e: any) => this.addClickHandler(map, marker))
+        }    
+
+        private addClickHandler(map, marker): void {
             map.on('click', (e: any) => {
                 this.spot.address.position.lat = e.latlng.lat
                 this.spot.address.position.lon = e.latlng.lng
+                this.pointSet = true
 
                 if(marker)
                     marker.setLatLng(e.latlng)
                 else
-                    marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map)
+                    marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map) 
             });
-        }     
+        } 
     }
 }

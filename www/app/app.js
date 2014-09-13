@@ -213,26 +213,32 @@ var app;
     'use strict';
 
     var EditSpotCtrl = (function () {
-        function EditSpotCtrl($scope, $routeParams, $http, $location, $window, $timeout, geoService) {
+        function EditSpotCtrl($scope, $stateParams, $http, $location, $window, $timeout, geoService, offlineService) {
             var _this = this;
             this.media = new Array();
             this.pricing = new Array();
             this.loading = false;
             this.edit = false;
+            this.pointSet = false;
             $scope.vm = this;
             this.scope = $scope;
             this.http = $http;
             this.location = $location;
             this.window = $window;
             this.geoService = geoService;
+            this.offlineService = offlineService;
             this.infrastructure = INFRASTRUCTURE;
 
-            var id = ($routeParams.id || "new");
-            console.log(id);
-            if (id === "new")
-                this.createSpot();
-            else
-                this.loadSpot(id);
+            if (this.offlineService.isOnline()) {
+                var id = ($stateParams.id || "new");
+
+                if (id === "new")
+                    this.createSpot();
+                else
+                    this.loadSpot(id);
+            } else {
+                this.location.path('/app/offline');
+            }
 
             this.scope.$on('geocode', function (e, address, error) {
                 return _this.geocodeFinished(address, error);
@@ -255,10 +261,8 @@ var app;
         };
 
         EditSpotCtrl.prototype.showSummary = function () {
-            if (this.scope.spotForm.$valid && this.checkPosition()) {
-                this.loading = true;
-                this.geoService.geocode(this.spot.address);
-            }
+            this.loading = true;
+            this.geoService.geocode(this.spot.address);
         };
 
         EditSpotCtrl.prototype.toggleInfrastructure = function (elem) {
@@ -339,6 +343,7 @@ var app;
         EditSpotCtrl.prototype.loadSpot = function (id) {
             var _this = this;
             this.edit = true;
+            this.pointSet = true;
             this.http.get(jsRoutes.controllers.Application.retrieveSpot(id).absoluteURL()).success(function (data, status) {
                 _this.spot = data;
                 if (!_this.spot)
@@ -348,34 +353,36 @@ var app;
             });
         };
 
-        EditSpotCtrl.prototype.checkPosition = function () {
-            if (this.spot.address.position.lat == 0 && this.spot.address.position.lon == 0) {
-                this.window.alert("no point set");
-                return false;
-            } else {
-                return true;
-            }
-        };
-
         EditSpotCtrl.prototype.createMap = function () {
             var _this = this;
             var map = L.map('map');
+            var marker = null;
 
             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
                 maxZoom: 18
             }).addTo(map);
 
-            var marker = null;
-
             this.geoService.current().then(function (data) {
                 map.setView([data.coords.latitude, data.coords.longitude], 13);
-                marker = L.marker([data.coords.latitude, data.coords.longitude]).addTo(map);
             });
 
+            this.addClickHandler(map, marker);
+
+            map.on('blur', function (e) {
+                return _this.addClickHandler(map, marker);
+            });
+            map.on('focus', function (e) {
+                return _this.addClickHandler(map, marker);
+            });
+        };
+
+        EditSpotCtrl.prototype.addClickHandler = function (map, marker) {
+            var _this = this;
             map.on('click', function (e) {
                 _this.spot.address.position.lat = e.latlng.lat;
                 _this.spot.address.position.lon = e.latlng.lng;
+                _this.pointSet = true;
 
                 if (marker)
                     marker.setLatLng(e.latlng);
@@ -384,8 +391,8 @@ var app;
             });
         };
         EditSpotCtrl.$inject = [
-            '$scope', '$routeParams', '$http', '$location',
-            '$window', '$timeout', 'geoService'];
+            '$scope', '$stateParams', '$http', '$location',
+            '$window', '$timeout', 'geoService', 'offlineService'];
         return EditSpotCtrl;
     })();
     app.EditSpotCtrl = EditSpotCtrl;
@@ -397,7 +404,7 @@ var app;
     'use strict';
 
     var SpotCtrl = (function () {
-        function SpotCtrl($scope, $http, $location, $routeParams, $sce, $window, offlineService) {
+        function SpotCtrl($scope, $http, $location, $stateParams, $sce, $window, offlineService) {
             var _this = this;
             this.hasImage = false;
             this.slideIndex = 0;
@@ -412,7 +419,7 @@ var app;
 
             this.oratio = this.sce.trustAsResourceUrl('//www.orat.io/js/widget/stmt.inc.min.js');
 
-            this.loadSpot($routeParams.id || "0");
+            this.loadSpot($stateParams.id || "0");
 
             this.scope.$on('online', function (e) {
                 _this.loadFinish();
@@ -483,10 +490,78 @@ var app;
         };
         SpotCtrl.$inject = [
             '$scope', '$http', '$location',
-            '$routeParams', '$sce', '$window', 'offlineService'];
+            '$stateParams', '$sce', '$window', 'offlineService'];
         return SpotCtrl;
     })();
     app.SpotCtrl = SpotCtrl;
+})(app || (app = {}));
+/// <reference path='../_all.ts' />
+var app;
+(function (app) {
+    'use strict';
+
+    var LocationCtrl = (function () {
+        function LocationCtrl($scope) {
+            $scope.vm = this;
+            this.scope = $scope;
+
+            this.createMap();
+        }
+        LocationCtrl.prototype.createMap = function () {
+            var _this = this;
+            angular.extend(this.scope, {
+                center: {
+                    lat: 52.374004,
+                    lng: 4.890359,
+                    zoom: 7
+                },
+                defaults: {
+                    scrollWheelZoom: false
+                },
+                events: {
+                    map: {
+                        enable: ['zoomstart', 'drag', 'click', 'mousemove', 'focus', 'blur'],
+                        logic: 'broadcast'
+                    }
+                }
+            });
+
+            this.scope.$on('leafletDirectiveMap.focus', function (event) {
+                _this.scope.eventDetected = "focus";
+                angular.extend(_this.scope, {
+                    events: {
+                        map: {
+                            enable: ['click'],
+                            logic: 'broadcast'
+                        }
+                    }
+                });
+            });
+
+            this.scope.$on('leafletDirectiveMap.blur', function (event) {
+                _this.scope.eventDetected = "blur";
+                angular.extend(_this.scope, {
+                    events: {
+                        map: {
+                            enable: ['click'],
+                            logic: 'broadcast'
+                        }
+                    }
+                });
+            });
+
+            this.scope.$on('leafletDirectiveMap.drag', function (event) {
+                _this.scope.eventDetected = "Drag";
+            });
+
+            this.scope.$on('leafletDirectiveMap.click', function (event) {
+                _this.scope.eventDetected = "Click";
+            });
+        };
+        LocationCtrl.$inject = ['$scope'];
+        return LocationCtrl;
+    })();
+    app.LocationCtrl = LocationCtrl;
 })(app || (app = {}));
 /// <reference path='../_all.ts' />
 var app;
@@ -504,43 +579,31 @@ var app;
         };
 
         GeoService.prototype.geocode = function (address) {
-            address.position.lat = 52.52000659999999;
-            address.position.lon = 13.404953999999975;
-            address.zip = 10969;
-            address.city = "Berlin";
-            this.rootScope.$broadcast('geocode', address, null);
-            /*this.http.get('http://nominatim.openstreetmap.org/reverse?format=json&addressdetails=1&accept-language=en&lat='
-            +address.lat+'&lon='+address.lon, {withCredentials: false}).success(
-            (data: any, status: any) => {
-            if(data.length > 0) {
-            address.lat = parseFloat(data[0].lat)
-            address.lon = parseFloat(data[0].lon)
-            
-            if(!data[0].address.city && !data[0].address.town && !data[0].address.village && data[0].address.hamlet)
-            address.city = data[0].address.hamlet
-            else if(!data[0].address.city && !data[0].address.town && data[0].address.village)
-            address.city = data[0].address.village
-            else if(!data[0].address.city && data[0].address.town)
-            address.city = data[0].address.town
-            else if(data[0].address.city && data[0].address.city === "Gemeinde Wien")
-            address.city = "Vienna"
-            else if(data[0].address.city)
-            address.city = data[0].address.city
-            else
-            address.city = data[0].address.state
-            
-            address.zip = parseInt(data[0].address.postcode)
-            
-            console.log(address)
-            
-            this.rootScope.$broadcast('geocode', address, null)
-            } else {
-            this.rootScope.$broadcast('geocode', null, 'Address not found. Please check your address information!')
-            }
-            }
-            ).error(
-            (data: any, status: any) => this.rootScope.$broadcast('geocode', null, 'Address not found. Please check your address information!')
-            )*/
+            var _this = this;
+            this.http.get('http://nominatim.openstreetmap.org/reverse?format=json&addressdetails=1&accept-language=en&lat=' + address.position.lat + '&lon=' + address.position.lon, { withCredentials: false }).success(function (data, status) {
+                if (data && data.address) {
+                    if (!data.address.city && !data.address.town && !data.address.village && data.address.hamlet)
+                        address.city = data.address.hamlet;
+                    else if (!data.address.city && !data.address.town && data.address.village)
+                        address.city = data.address.village;
+                    else if (!data.address.city && data.address.town)
+                        address.city = data.address.town;
+                    else if (data.address.city && data.address.city === "Gemeinde Wien")
+                        address.city = "Vienna";
+                    else if (data.address.city)
+                        address.city = data.address.city;
+                    else
+                        address.city = data.address.state;
+
+                    address.zip = parseInt(data.address.postcode);
+
+                    _this.rootScope.$broadcast('geocode', address, null);
+                } else {
+                    _this.rootScope.$broadcast('geocode', null, 'Address not found. Please check your address information!');
+                }
+            }).error(function (data, status) {
+                return _this.rootScope.$broadcast('geocode', null, 'Address not found. Please check your address information!');
+            });
         };
         GeoService.$inject = ['$rootScope', '$http', 'geolocation'];
         return GeoService;
@@ -629,6 +692,7 @@ var app;
 
         ImgUpload.prototype.handleUpload = function (files, element) {
             var _this = this;
+            console.log(files);
             this.loading = true;
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
@@ -639,6 +703,7 @@ var app;
                 }).progress(function (evt) {
                     return console.log('percent: ' + 100.0 * evt.loaded / evt.total);
                 }).success(function (data, status, headers, config) {
+                    console.log(data.url);
                     var url = SERVER + "/res/" + data.url;
                     _this.myScope.picture.url = url;
                     _this.loading = false;
@@ -744,7 +809,7 @@ var app;
         'ngRoute', 'ngResource', 'ionic',
         'ng-back', 'angularFileUpload', 'filters', 'angular-carousel', 'angulartics',
         'angulartics.google.analytics', 'pascalprecht.translate',
-        'geolocation']);
+        'geolocation', 'leaflet-directive']);
 
     ub.run(function ($ionicPlatform) {
         $ionicPlatform.ready(function () {
@@ -761,6 +826,7 @@ var app;
     ub.controller('menuCtrl', app.MenuCtrl);
     ub.controller('editSpotCtrl', app.EditSpotCtrl);
     ub.controller('spotCtrl', app.SpotCtrl);
+    ub.controller('locationCtrl', app.LocationCtrl);
 
     ub.service('geoService', app.GeoService);
     ub.service('offlineService', app.OfflineService);
@@ -814,6 +880,13 @@ var app;
                     templateUrl: "partials/404.html"
                 }
             }
+        }).state('app.offline', {
+            url: "/offline",
+            views: {
+                'menuContent': {
+                    templateUrl: "partials/offline.html"
+                }
+            }
         }).state('app.about', {
             url: "/about",
             views: {
@@ -844,10 +917,13 @@ var app;
 
     ub.run([
         '$rootScope', '$http', 'offlineService', function ($rootScope, $http, offlineService) {
-            $rootScope.$on('$routeChangeStart', function (event, next, current) {
-                $http.get("http://localhost:9000/ping").success(function (data, status) {
+            console.log("run");
+            $rootScope.$on('$stateChangeStart', function (event, next, current) {
+                $http.get(SERVER + "/ping").success(function (data, status) {
+                    console.log("online");
                     offlineService.setOnline();
                 }).error(function (data, status) {
+                    console.log("offline");
                     offlineService.setOffline();
                 });
             });
@@ -859,6 +935,7 @@ var app;
 /// <reference path='controllers/HomeCtrl.ts' />
 /// <reference path='controllers/EditSpotCtrl.ts' />
 /// <reference path='controllers/SpotCtrl.ts' />
+/// <reference path='controllers/LocationCtrl.ts' />
 /// <reference path='services/GeoService.ts' />
 /// <reference path='services/OfflineService.ts' />
 /// <reference path='directives/ImgUpload.ts' />

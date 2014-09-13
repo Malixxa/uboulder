@@ -1,0 +1,28 @@
+<ion-side-menus>
+
+  <ion-pane ion-side-menu-content>
+    <ion-nav-bar class="bar-stable nav-title-slide-ios7">
+    </ion-nav-bar>
+    <ion-nav-view name="menuContent" animation="slide-left-right"></ion-nav-view>
+  </ion-pane>
+
+  <ion-side-menu side="left">
+    <header class="bar bar-header bar-stable header-menu text-center">
+      <h1 class="title-menu text-center">{{ 'UBOULDER' | translate }}</h1>
+    </header>
+
+    <ion-content class="has-header">
+      <ion-list>
+        <ion-item nav-clear menu-close href="#/app/home">
+          {{ 'START' | translate }}
+        </ion-item>
+        <ion-item nav-clear menu-close href="#/app/new">
+          {{ 'SUBMIT' | translate }}
+        </ion-item>
+        <ion-item nav-clear menu-close href="#/app/about">
+          {{ 'ABOUT' | translate }}
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-side-menu>
+</ion-side-menus>

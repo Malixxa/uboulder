@@ -53,6 +53,10 @@ input[type="number"],input[type="text"] {
 	border: none;
 }
 
+a {
+	color: #000;
+}
+
 a:focus, a:hover {
 	text-decoration: none;
 }
@@ -153,4 +157,12 @@ input[type="file"] {
 	display: block;
 	margin-left: 0;
 	margin-right: 0;
+}
+
+.ng-invalid {
+	border-color: red;
+}
+
+.ng-pristine {
+	border-color: #ccc;
 }

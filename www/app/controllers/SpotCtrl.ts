@@ -12,14 +12,14 @@ module app {
     	vm: SpotCtrl
     }
 
-    export interface ISpotParams extends ng.route.IRouteParamsService {
+    export interface ISpotParams {
         id: string
     }
 
     export class SpotCtrl {
       
         static $inject: Array<string> = ['$scope','$http','$location',
-            '$routeParams','$sce','$window','offlineService'];
+            '$stateParams','$sce','$window','offlineService'];
 
         private scope: app.ISpotScope
         private http: ng.IHttpService
@@ -36,7 +36,7 @@ module app {
         private finished: boolean = false 
 
         constructor($scope: app.ISpotScope, $http: ng.IHttpService, $location: ng.ILocationService, 
-            $routeParams: app.ISpotParams, $sce: any, $window: ng.IWindowService,
+            $stateParams: app.ISpotParams, $sce: any, $window: ng.IWindowService,
             offlineService: app.OfflineService) {  
         	this.scope = $scope
             this.scope.vm = this
@@ -48,7 +48,7 @@ module app {
 
             this.oratio = this.sce.trustAsResourceUrl('//www.orat.io/js/widget/stmt.inc.min.js')
 
-            this.loadSpot($routeParams.id || "0")
+            this.loadSpot($stateParams.id || "0")
 
             this.scope.$on('online', (e: any) => {
                 this.loadFinish()

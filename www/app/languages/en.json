@@ -30,6 +30,7 @@
 	"OFFLINE_INFO": "You are offline. Tap to reload.",
 
 	"NEW_NEWSPOT": "Create a new spot",
+	"NEW_EDITSPOT": "Edit spot",
 	"NEW_BASIC_INFO": "Basic Info",
 	"NEW_INFO_TEXT": "Write some lines about the spot.",
 	"NEW_TITLE": "Title",
@@ -48,6 +49,9 @@
 	"NEW_SAVE": "Save",
 	"NEW_IMPORTANT": "Important",
 	"NEW_FILE_SIZE": "Maximum File Size 10MB",
+	"SUGGEST_EDIT": "Suggest an edit",
+
+	"MISSING_FIELDS": "Please fill out these fields",
 
 	"SPOT_WIDGET_EDIT": "Edit",
 
@@ -67,7 +71,11 @@
 	"BTC": "Bitcoin",
 	"LTC": "Litecoin",
 	"DOGE": "Dogecoin",
-	"PAYPAL": "PayPal"
+	"PAYPAL": "PayPal",
+
+	"404": "Thanks for submitting a spot!",
+	"404_INFO": "This spot has to be reviewed and activated by an administrator.",
+	"404_HOME": "Back to home"
 
 
 

@@ -56,6 +56,7 @@ module app {
         }
 
         private handleUpload(files: any, element: JQuery) {
+            console.log(files)
             this.loading = true
             for (var i = 0; i < files.length; i++) {
                 var file = files[i]
@@ -67,6 +68,7 @@ module app {
                     (evt) => console.log('percent: ' + 100.0 * evt.loaded / evt.total)
                 ).success(
                     (data, status, headers, config) => {
+                        console.log(data.url)
                         var url: string = SERVER+"/res/"+data.url
                         this.myScope.picture.url = url
                         this.loading = false

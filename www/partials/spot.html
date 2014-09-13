@@ -4,10 +4,6 @@
   </ion-nav-buttons>
   <ion-content class="has-header">
 
-    <div class="alert alert-danger text-center" id="offline" onclick="location.reload();">
-        <i class="ion-alert-circled"></i> <strong>{{ 'OFFLINE_TAP' | translate }}</strong>
-    </div>
-
     <div class="row">
       <div class="pull-right edit">
         <a href="#/app/edit/{{ vm.spot.id }}"><i class="ion-edit"></i> {{ 'SPOT_WIDGET_EDIT' | translate }}</a>
@@ -65,6 +61,12 @@
     <div class="row">
       <div class="col-sm-20">
           <div id="map" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-20">
+        <a class="oratio-widget" href="https://www.orat.io/org/107" data-widget-id="qz4ndp3selum">Discuss on orat.io</a><script type="text/javascript" src="//www.orat.io/js/widget/stmt.inc.min.js"></script>
       </div>
     </div>
 
