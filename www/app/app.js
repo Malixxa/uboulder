@@ -369,17 +369,21 @@ var app;
 
             this.addClickHandler(map, marker);
 
-            map.on('blur', function (e) {
-                return _this.addClickHandler(map, marker);
+            map.on('blur', function () {
+                console.log("blur");
+                _this.addClickHandler(map, marker);
             });
-            map.on('focus', function (e) {
-                return _this.addClickHandler(map, marker);
+            map.on('focus', function () {
+                console.log("focus");
+                _this.addClickHandler(map, marker);
             });
         };
 
         EditSpotCtrl.prototype.addClickHandler = function (map, marker) {
             var _this = this;
             map.on('click', function (e) {
+                console.log("click");
+
                 _this.spot.address.position.lat = e.latlng.lat;
                 _this.spot.address.position.lon = e.latlng.lng;
                 _this.pointSet = true;
@@ -494,74 +498,6 @@ var app;
         return SpotCtrl;
     })();
     app.SpotCtrl = SpotCtrl;
-})(app || (app = {}));
-/// <reference path='../_all.ts' />
-var app;
-(function (app) {
-    'use strict';
-
-    var LocationCtrl = (function () {
-        function LocationCtrl($scope) {
-            $scope.vm = this;
-            this.scope = $scope;
-
-            this.createMap();
-        }
-        LocationCtrl.prototype.createMap = function () {
-            var _this = this;
-            angular.extend(this.scope, {
-                center: {
-                    lat: 52.374004,
-                    lng: 4.890359,
-                    zoom: 7
-                },
-                defaults: {
-                    scrollWheelZoom: false
-                },
-                events: {
-                    map: {
-                        enable: ['zoomstart', 'drag', 'click', 'mousemove', 'focus', 'blur'],
-                        logic: 'broadcast'
-                    }
-                }
-            });
-
-            this.scope.$on('leafletDirectiveMap.focus', function (event) {
-                _this.scope.eventDetected = "focus";
-                angular.extend(_this.scope, {
-                    events: {
-                        map: {
-                            enable: ['click'],
-                            logic: 'broadcast'
-                        }
-                    }
-                });
-            });
-
-            this.scope.$on('leafletDirectiveMap.blur', function (event) {
-                _this.scope.eventDetected = "blur";
-                angular.extend(_this.scope, {
-                    events: {
-                        map: {
-                            enable: ['click'],
-                            logic: 'broadcast'
-                        }
-                    }
-                });
-            });
-
-            this.scope.$on('leafletDirectiveMap.drag', function (event) {
-                _this.scope.eventDetected = "Drag";
-            });
-
-            this.scope.$on('leafletDirectiveMap.click', function (event) {
-                _this.scope.eventDetected = "Click";
-            });
-        };
-        LocationCtrl.$inject = ['$scope'];
-        return LocationCtrl;
-    })();
-    app.LocationCtrl = LocationCtrl;
 })(app || (app = {}));
 /// <reference path='../_all.ts' />
 var app;
@@ -809,7 +745,7 @@ var app;
         'ngRoute', 'ngResource', 'ionic',
         'ng-back', 'angularFileUpload', 'filters', 'angular-carousel', 'angulartics',
         'angulartics.google.analytics', 'pascalprecht.translate',
-        'geolocation', 'leaflet-directive']);
+        'geolocation']);
 
     ub.run(function ($ionicPlatform) {
         $ionicPlatform.ready(function () {
@@ -826,7 +762,6 @@ var app;
     ub.controller('menuCtrl', app.MenuCtrl);
     ub.controller('editSpotCtrl', app.EditSpotCtrl);
     ub.controller('spotCtrl', app.SpotCtrl);
-    ub.controller('locationCtrl', app.LocationCtrl);
 
     ub.service('geoService', app.GeoService);
     ub.service('offlineService', app.OfflineService);
@@ -907,6 +842,11 @@ var app;
         $urlRouterProvider.otherwise('/app/home');
     });
 
+    // ub.config(['$routeProvider', function($routeProvider: ng.route.IRouteProvider) {
+    //     $routeProvider.
+    //         when('/new', {templateUrl: 'partials/new.html', controller: 'editSpotCtrl'}).
+    //       otherwise({redirectTo: '/new'})
+    //   }])
     ub.config([
         '$translateProvider', function ($translateProvider) {
             $translateProvider.useStaticFilesLoader({
@@ -935,7 +875,6 @@ var app;
 /// <reference path='controllers/HomeCtrl.ts' />
 /// <reference path='controllers/EditSpotCtrl.ts' />
 /// <reference path='controllers/SpotCtrl.ts' />
-/// <reference path='controllers/LocationCtrl.ts' />
 /// <reference path='services/GeoService.ts' />
 /// <reference path='services/OfflineService.ts' />
 /// <reference path='directives/ImgUpload.ts' />

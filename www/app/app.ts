@@ -11,7 +11,7 @@ module app {
     var ub = angular.module('ub', ['ngRoute','ngResource', 'ionic',
         'ng-back','angularFileUpload', 'filters','angular-carousel', 'angulartics',
         'angulartics.google.analytics','pascalprecht.translate',
-        'geolocation','leaflet-directive'])
+        'geolocation'])
 
     ub.run(function($ionicPlatform) {
         $ionicPlatform.ready(function() {
@@ -28,7 +28,6 @@ module app {
     ub.controller('menuCtrl', MenuCtrl)
     ub.controller('editSpotCtrl', EditSpotCtrl)
     ub.controller('spotCtrl', SpotCtrl)
-    ub.controller('locationCtrl', LocationCtrl)
 
     ub.service('geoService', GeoService)
     ub.service('offlineService', OfflineService)
@@ -124,6 +123,13 @@ module app {
       // if none of the above states are matched, use this as the fallback
       $urlRouterProvider.otherwise('/app/home');
     });
+
+    // ub.config(['$routeProvider', function($routeProvider: ng.route.IRouteProvider) {
+    //     $routeProvider.
+    //         when('/new', {templateUrl: 'partials/new.html', controller: 'editSpotCtrl'}).
+    //       otherwise({redirectTo: '/new'})
+    //   }])
+
 
     ub.config(['$translateProvider', function($translateProvider) {
         $translateProvider.useStaticFilesLoader({

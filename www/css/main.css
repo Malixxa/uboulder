@@ -69,7 +69,7 @@ a:focus, a:hover {
 	margin: 10px 10px 0 0;
 }
 
-.pPricing {
+.space {
 	margin-top: 20px !important;
 }
 
@@ -165,4 +165,8 @@ input[type="file"] {
 
 .ng-pristine {
 	border-color: #ccc;
+}
+
+.icon {
+	width: 32px;
 }

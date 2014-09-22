@@ -6,7 +6,6 @@
 /// <reference path='controllers/HomeCtrl.ts' />
 /// <reference path='controllers/EditSpotCtrl.ts' />
 /// <reference path='controllers/SpotCtrl.ts' />
-/// <reference path='controllers/LocationCtrl.ts' />
 
 /// <reference path='services/GeoService.ts' />
 /// <reference path='services/OfflineService.ts' />

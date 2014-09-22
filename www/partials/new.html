@@ -18,17 +18,13 @@
     </div>
 
     <!-- ng-if is throwing an error, so i have to render this div -->
-    <div class="row" ng-if="!vm.edit" ng-controller="locationCtrl">
+    <div class="row" ng-show="!vm.edit">
       <div class="col-sm-20">
         <div id="map" style="height:250px"></div>
-        <!--leaflet center="center" event-broadcast="events" height="250px"></leaflet>
-        <ul>
-          <li><strong ng-bind="eventDetected"></strong> caught in listener.</li>
-        </ul-->
       </div>
     </div>
 
-    <div class="row">
+    <div class="row space">
       <div class="col-xs-20">
         <legend>{{'NEW_BASIC_INFO' | translate}}<small>{{'NEW_INFO_TEXT' | translate}}</small></legend>
       </div>
@@ -89,7 +85,7 @@
       </div>
     </div>
 
-    <div class="row pPricing">
+    <div class="row space">
       <div class="col-sm-20">
         <legend>{{'PRICING' | translate}}<small>{{'PRICING_INFO' | translate}}</small></legend>
       </div>

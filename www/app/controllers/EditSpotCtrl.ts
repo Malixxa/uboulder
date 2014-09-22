@@ -194,12 +194,20 @@ module app {
 
             this.addClickHandler(map, marker);
 
-            map.on('blur', (e: any) => this.addClickHandler(map, marker))
-            map.on('focus', (e: any) => this.addClickHandler(map, marker))
+            map.on('blur', () => {
+                console.log("blur")
+                this.addClickHandler(map, marker)
+                })
+            map.on('focus', () => {
+                console.log("focus")
+                this.addClickHandler(map, marker)
+                })
         }    
 
         private addClickHandler(map, marker): void {
             map.on('click', (e: any) => {
+                console.log("click")
+
                 this.spot.address.position.lat = e.latlng.lat
                 this.spot.address.position.lon = e.latlng.lng
                 this.pointSet = true
