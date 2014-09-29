@@ -293,6 +293,7 @@ var app;
             var _this = this;
             this.loading = true;
             this.handleMedias();
+            this.handlePricings();
 
             this.http.post(jsRoutes.controllers.Application.createSpot().absoluteURL(), this.spot).success(function (data, status) {
                 _this.spot = data;
@@ -355,43 +356,31 @@ var app;
 
         EditSpotCtrl.prototype.createMap = function () {
             var _this = this;
-            var map = L.map('map');
+            var mapOptions = {
+                center: { lat: 48.20817400000001, lng: 16.373819 },
+                zoom: 15
+            };
             var marker = null;
 
-            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-                maxZoom: 18
-            }).addTo(map);
-
             this.geoService.current().then(function (data) {
-                map.setView([data.coords.latitude, data.coords.longitude], 13);
+                map.setCenter(new google.maps.LatLng(data.coords.latitude, data.coords.longitude));
             });
 
-            this.addClickHandler(map, marker);
+            var map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
-            map.on('blur', function () {
-                console.log("blur");
-                _this.addClickHandler(map, marker);
-            });
-            map.on('focus', function () {
-                console.log("focus");
-                _this.addClickHandler(map, marker);
-            });
-        };
+            google.maps.event.addListener(map, 'click', function (event) {
+                var lat = event.latLng.lat();
+                var lng = event.latLng.lng();
 
-        EditSpotCtrl.prototype.addClickHandler = function (map, marker) {
-            var _this = this;
-            map.on('click', function (e) {
-                console.log("click");
-
-                _this.spot.address.position.lat = e.latlng.lat;
-                _this.spot.address.position.lon = e.latlng.lng;
+                _this.spot.address.position.lat = lat;
+                _this.spot.address.position.lon = lng;
                 _this.pointSet = true;
 
-                if (marker)
-                    marker.setLatLng(e.latlng);
-                else
-                    marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
+                if (marker == null) {
+                    marker = new google.maps.Marker({ position: event.latLng, map: map });
+                } else {
+                    marker.setPosition(event.latLng);
+                }
             });
         };
         EditSpotCtrl.$inject = [
@@ -431,7 +420,6 @@ var app;
         }
         SpotCtrl.prototype.loadSpot = function (id) {
             var _this = this;
-            console.log(id);
             localforage.getItem(id, function (spot) {
                 _this.spot = spot;
                 if (_this.spot) {
@@ -857,13 +845,10 @@ var app;
 
     ub.run([
         '$rootScope', '$http', 'offlineService', function ($rootScope, $http, offlineService) {
-            console.log("run");
             $rootScope.$on('$stateChangeStart', function (event, next, current) {
                 $http.get(SERVER + "/ping").success(function (data, status) {
-                    console.log("online");
                     offlineService.setOnline();
                 }).error(function (data, status) {
-                    console.log("offline");
                     offlineService.setOffline();
                 });
             });

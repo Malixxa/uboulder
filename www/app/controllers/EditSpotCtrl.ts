@@ -2,7 +2,7 @@
 
 declare var jsRoutes: any 
 declare var INFRASTRUCTURE: any
-declare var L: any
+declare var google: any
 
 module app {
     'use strict';
@@ -112,6 +112,7 @@ module app {
         private insert(): void {
             this.loading = true
             this.handleMedias()
+            this.handlePricings()
 
             this.http.post(jsRoutes.controllers.Application.createSpot().absoluteURL(), this.spot).success(
                 (data: Spot, status: any) => {
@@ -152,7 +153,7 @@ module app {
                 if(!this.pricing[i].description) {
                     this.pricing.splice(i, 1);
                 }
-             }
+            }
             this.spot.pricing = this.spot.pricing.concat(this.pricing)
         }
 
@@ -180,43 +181,58 @@ module app {
         }   
 
         private createMap(): void {
-            var map = L.map('map')
+            var mapOptions = {
+                center: { lat: 48.20817400000001, lng: 16.373819},
+                zoom: 15
+            }
             var marker = null
 
-            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-                maxZoom: 18
-            }).addTo(map);
-
             this.geoService.current().then((data: any) => {
-                map.setView([data.coords.latitude, data.coords.longitude], 13);
+                map.setCenter(new google.maps.LatLng(data.coords.latitude, data.coords.longitude))
             })
 
-            this.addClickHandler(map, marker);
+            var map = new google.maps.Map(document.getElementById('map'), mapOptions)
 
-            map.on('blur', () => {
-                console.log("blur")
-                this.addClickHandler(map, marker)
-                })
-            map.on('focus', () => {
-                console.log("focus")
-                this.addClickHandler(map, marker)
-                })
-        }    
+            google.maps.event.addListener(map, 'click', (event) => {
+                var lat: number = event.latLng.lat()
+                var lng: number = event.latLng.lng()
 
-        private addClickHandler(map, marker): void {
-            map.on('click', (e: any) => {
-                console.log("click")
-
-                this.spot.address.position.lat = e.latlng.lat
-                this.spot.address.position.lon = e.latlng.lng
+                this.spot.address.position.lat = lat
+                this.spot.address.position.lon = lng
                 this.pointSet = true
 
-                if(marker)
-                    marker.setLatLng(e.latlng)
-                else
-                    marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map) 
-            });
-        } 
+                if(marker == null) {
+                    marker = new google.maps.Marker({position: event.latLng, map: map})
+                } else {
+                    marker.setPosition(event.latLng)
+                }
+                
+            })
+        }
+
+        // private createMap(): void {
+        //     var map = L.map('map')
+        //     var marker = null
+
+        //     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        //         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        //         maxZoom: 18
+        //     }).addTo(map);
+
+        //     this.geoService.current().then((data: any) => {
+        //         map.setView([data.coords.latitude, data.coords.longitude], 13);
+        //     })
+
+        //     this.addClickHandler(map, marker);
+
+        //     map.on('blur', () => {
+        //         console.log("blur")
+        //         this.addClickHandler(map, marker)
+        //         })
+        //     map.on('focus', () => {
+        //         console.log("focus")
+        //         this.addClickHandler(map, marker)
+        //         })
+        // }    
     }
 }

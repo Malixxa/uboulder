@@ -140,16 +140,13 @@ module app {
 
     ub.run(['$rootScope','$http','offlineService',function($rootScope: any, $http: ng.IHttpService,
         offlineService: app.OfflineService){
-        console.log("run")
         $rootScope.$on('$stateChangeStart', function (event, next, current) {
             $http.get(SERVER+"/ping").success(
                 (data: any, status: any) => {
-                    console.log("online")
                     offlineService.setOnline()
                 }
             ).error(
                 (data: any, status: any) => {
-                    console.log("offline")
                     offlineService.setOffline()
                 }
             )

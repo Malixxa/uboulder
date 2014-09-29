@@ -56,7 +56,6 @@ module app {
         }
 
         private loadSpot(id: string): void {
-            console.log(id)
             localforage.getItem(id, (spot: Spot) => {
                 this.spot = spot
                 if(this.spot) {

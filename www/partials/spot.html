@@ -14,7 +14,6 @@
       <div class="col-sm-20">
         <h1 class="ad-detail"><a ng-back></a> {{ vm.spot.title }} </h1>
       </div> 
-
     </div>
 
     <div class="row">
@@ -26,17 +25,17 @@
     </div>
 
     <div class="row">
+      <div class="col-sm-10">
+          <p itemprop="description">{{ vm.spot.description }}</p>
+      </div>
+    </div>
+
+    <div class="row">
       <div ng-show="vm.offlineService.isOnline()" id="spot-images">
         <widget-img images="vm.spot.media" ng-if="vm.hasImage"></widget-img>
       </div>
       <div ng-show="vm.offlineService.isOffline()" class="col-sm-20 text-center" id="spot-images-offline">
         <img src="images/carousel_offline.png" height="300" class="img-responsive">
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-10">
-          <p itemprop="description">{{ vm.spot.description }}</p>
       </div>
     </div>
 
@@ -64,9 +63,10 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row" ng-show="vm.offlineService.isOnline()">
       <div class="col-sm-20">
-        <a class="oratio-widget" href="https://www.orat.io/org/107" data-widget-id="qz4ndp3selum">Discuss on orat.io</a><script type="text/javascript" src="//www.orat.io/js/widget/stmt.inc.min.js"></script>
+        <a class="oratio-widget" href="https://www.orat.io/org/107" data-widget-id="qz4ndp3selum" 
+        data-page-id="{{ vm.spot.id }}" data-title="{{ vm.spot.title }}">Discuss on orat.io</a><script type="text/javascript" src="//www.orat.io/js/widget/stmt.inc.min.js"></script>
       </div>
     </div>
 
