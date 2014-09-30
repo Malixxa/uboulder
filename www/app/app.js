@@ -225,6 +225,7 @@ var app;
             this.http = $http;
             this.location = $location;
             this.window = $window;
+            this.timeout = $timeout;
             this.geoService = geoService;
             this.offlineService = offlineService;
             this.infrastructure = INFRASTRUCTURE;
@@ -347,6 +348,7 @@ var app;
             this.pointSet = true;
             this.http.get(jsRoutes.controllers.Application.retrieveSpot(id).absoluteURL()).success(function (data, status) {
                 _this.spot = data;
+                console.log(_this.spot);
                 if (!_this.spot)
                     _this.location.path('/app/404').replace();
             }).error(function (data, status) {
@@ -374,7 +376,9 @@ var app;
 
                 _this.spot.address.position.lat = lat;
                 _this.spot.address.position.lon = lng;
-                _this.pointSet = true;
+                _this.timeout(function () {
+                    return _this.pointSet = true;
+                });
 
                 if (marker == null) {
                     marker = new google.maps.Marker({ position: event.latLng, map: map });

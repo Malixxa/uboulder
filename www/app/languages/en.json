@@ -58,7 +58,7 @@
 	"IMPRINT": "Imprint",
 	"IMPRINT_OWNER": "Owner",
 	"IMPRINT_NOTE": "Note",
-	"IMPRINT_NOTE_TEXT": "is keen to keep all data - including links - up to date. On the part of uBoulder, we cannnot guarantee for data that has altered since the website has been updated. We assume no liability whatsoever with respect to the accuracy and completeness of the information presented on this website and disclaim all liability arising out of the use of such information and data.",
+	"IMPRINT_NOTE_TEXT": "is keen to keep all data - including links - up to date. On the part of uBoulder, we cannnot guarantee for data that has altered since the app has been updated. We assume no liability whatsoever with respect to the accuracy and completeness of the information presented on this app and disclaim all liability arising out of the use of such information and data.",
 	"IMPRINT_PRIVACY": "Privacy & Terms",
 	"IMPRINT_PRIVACY_NOTE": "Please find any further informations in our",
 	"IMPRINT_TERMS": "Terms of Service",
@@ -71,7 +71,8 @@
 	"BTC": "Bitcoin",
 	"LTC": "Litecoin",
 	"DOGE": "Dogecoin",
-	"PAYPAL": "PayPal",
+	"PAYPAL": "PayPal Email",
+	"DOWNLOAD_PRO": "or support this project by downloading the uBoulder Pro app.",
 
 	"404": "Thanks for submitting a spot!",
 	"404_INFO": "This spot has to be reviewed and activated by an administrator.",

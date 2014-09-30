@@ -170,3 +170,11 @@ input[type="file"] {
 .icon {
 	width: 32px;
 }
+
+h1.ad-detail, h2.ad-detail {
+	color: #666;
+}
+
+.img-thumb-active {
+	outline: 2px solid orange;
+}

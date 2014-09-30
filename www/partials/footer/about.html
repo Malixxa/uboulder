@@ -15,11 +15,11 @@
         <img src="images/d.jpg" class="img-circle img-inline">
         <h3 class="text-center">David <br><small>The Rock</small></h3>
         <p class="text-center">
-        	<a href="https://www.twitter.com/3x14159265" class="btn btn-twitter" target="_blank"><i class="ion-social-twitter"></i> 3x14159265</a>
-          <a href="https://www.facebook.com/3x14159265" class="btn btn-twitter" target="_blank"><i class="ion-social-facebook"></i> 3x14159265</a>
+        	<a class="btn btn-twitter" onclick="window.open('https://www.twitter.com/3x14159265', '_system')"><i class="ion-social-twitter"></i> 3x14159265</a>
+          <a onclick="window.open('https://www.facebook.com/3x14159265','_system')" class="btn btn-twitter"><i class="ion-social-facebook"></i> 3x14159265</a>
           <br>
           <br>
-          <a ng-href="http://www.pichsenmeister.com" class="btn btn-email" target="_blank">www.pichsenmeister.com</a><br>
+          <a onclick="window.open('http://www.pichsenmeister.com', '_system')" class="btn btn-email">www.pichsenmeister.com</a><br>
         	<a ng-href="mailto:info@boulder.com" class="btn btn-email" target="_blank"><i class="fa fa-envelope icon-white"></i> info@uboulder.com</a>
         </p>
       </div>
@@ -54,14 +54,11 @@
           <strong>{{ 'DOGE' | translate }}</strong>: DNdQM49uQ4AiSgixnsXdu3CJc9oBmJLovk
         </p>
         <p>
-          <strong>{{ 'PAYPAL' | translate }}</strong>: 
+          <strong>{{ 'PAYPAL' | translate }}</strong>: david@pichsenmeister.com
         </p>
-            <form target="_blank" action="https://www.paypal.com/cgi-bin/webscr" method="post">
-              <input type="hidden" name="cmd" value="_s-xclick">
-              <input type="hidden" name="hosted_button_id" value="Y7L4MCEMUYKTW">
-              <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-              <img alt="" border="0" src="https://www.paypalobjects.com/de_DE/i/scr/pixel.gif" width="1" height="1">
-              </form>
+        <p>
+          {{ 'DOWNLOAD_PRO' | translate }}
+        </p>
       </div>
     </div>
 

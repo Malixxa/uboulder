@@ -1,4 +1,4 @@
-<ion-view title="{{ 'UBOULDER' | translate }}">
+<ion-view title="<img src='images/icon.png' class='icon' alt='icon'> {{ 'UBOULDER' | translate }}">
   <ion-nav-buttons side="left">
     <button menu-toggle="left"class="button button-icon icon ion-navicon"></button>
   </ion-nav-buttons>
@@ -73,10 +73,10 @@
     </div>
 
     <div ng-repeat="picture in vm.media" class="row form-group">
-      <div ng-if="(picture.url == null)">
+      <div ng-if="(picture.url == null)" class="col-xs-10">
         <img-upload></img-upload>
       </div>
-      <div ng-if="(picture.url != null)" class="col-xs-20">
+      <div ng-if="(picture.url != null)" class="col-xs-10">
         <img ng-src="{{ picture.url }}/128/128/crop" alt="vm.spot.title">
       </div>
       <div class="col-xs-10">
@@ -111,7 +111,7 @@
 
     <div class="row form-group" ng-repeat="pricing in vm.pricing">
       <div class="col-xs-10">
-        <input type="text" class="form-control form-group" maxlength="50" placeholder="{{ 'NEW_PRODUCT_NAME' | translate }}" ng-model="pricing.description" required>
+        <input type="text" class="form-control form-group" maxlength="50" placeholder="{{ 'NEW_PRODUCT_NAME' | translate }}" ng-model="pricing.description">
       </div>
       <div class="col-xs-10">
         <div class="form-group">

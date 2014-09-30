@@ -5,7 +5,7 @@ declare var INFRASTRUCTURE: any
 declare var google: any
 
 module app {
-    'use strict';
+    'use strict'
 
     export interface IEditSpotScope extends ng.IScope {
     	vm: EditSpotCtrl
@@ -25,6 +25,7 @@ module app {
 	    private location: ng.ILocationService
 	    private scope: app.IEditSpotScope
         private window: ng.IWindowService
+        private timeout: ng.ITimeoutService
         private geoService: app.GeoService
         private offlineService: app.OfflineService
         private media: Array<app.Media> = new Array<app.Media>()
@@ -46,6 +47,7 @@ module app {
         	this.http = $http
         	this.location = $location
             this.window = $window
+            this.timeout = $timeout
             this.geoService = geoService
             this.offlineService = offlineService
             this.infrastructure = INFRASTRUCTURE
@@ -170,6 +172,7 @@ module app {
             this.http.get(jsRoutes.controllers.Application.retrieveSpot(id).absoluteURL()).success(
                 (data: Spot, status: any) => {
                     this.spot = data
+                    console.log(this.spot)
                     if(!this.spot) 
                         this.location.path('/app/404').replace()     
                 }
@@ -199,7 +202,7 @@ module app {
 
                 this.spot.address.position.lat = lat
                 this.spot.address.position.lon = lng
-                this.pointSet = true
+                this.timeout(() => this.pointSet = true)
 
                 if(marker == null) {
                     marker = new google.maps.Marker({position: event.latLng, map: map})
@@ -209,30 +212,5 @@ module app {
                 
             })
         }
-
-        // private createMap(): void {
-        //     var map = L.map('map')
-        //     var marker = null
-
-        //     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-        //         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-        //         maxZoom: 18
-        //     }).addTo(map);
-
-        //     this.geoService.current().then((data: any) => {
-        //         map.setView([data.coords.latitude, data.coords.longitude], 13);
-        //     })
-
-        //     this.addClickHandler(map, marker);
-
-        //     map.on('blur', () => {
-        //         console.log("blur")
-        //         this.addClickHandler(map, marker)
-        //         })
-        //     map.on('focus', () => {
-        //         console.log("focus")
-        //         this.addClickHandler(map, marker)
-        //         })
-        // }    
     }
 }
