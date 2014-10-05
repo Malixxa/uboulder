@@ -25,6 +25,7 @@
 	"PRICE": "Price",
 	"PRICING_INFO": "Please provide some pricing infos, if it's not for free!",
 	"INFRASTRUCTURE": "Infrastructure",
+	"CURRENCY": "EUR",
 
 	"OFFLINE": "This content is not available in offline mode.",
 	"OFFLINE_INFO": "You are offline. Tap to reload.",

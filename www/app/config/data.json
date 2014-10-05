@@ -1,2 +1,2 @@
 var INFRASTRUCTURE = ["BOULDER", "CLIMBING", "ROCK", "INDOOR", "OUTDOOR", "URBAN"];
-var SERVER = "http://localhost:9000"
+var SERVER = "http://178.62.214.64:9000"

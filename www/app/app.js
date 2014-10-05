@@ -685,6 +685,17 @@ var app;
                 $scope.spot.image = $scope.spot.media[0].url;
             } else
                 $scope.spot.hasImage = false;
+
+            if ($scope.spot.pricing.length >= 1) {
+                $scope.spot.min = $scope.spot.pricing[0].amount;
+                $scope.spot.max = $scope.spot.pricing[0].amount;
+                $scope.spot.pricing.forEach(function (elem, index, array) {
+                    if (elem.amount < $scope.spot.min)
+                        $scope.spot.min = elem.amount;
+                    if (elem.amount > $scope.spot.max)
+                        $scope.spot.max = elem.amount;
+                });
+            }
         };
         return Widget;
     })();

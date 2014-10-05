@@ -13,6 +13,7 @@
       <span class="hidden-xs">{{ spot.description|truncate:200 }}</span>
       <ul>
         <li><i class="ion-location"></i> <strong>{{ spot.address.zip }} {{ spot.address.city }}</strong></li>
+        <li ng-show="spot.max || spot.min"><i class="ion-ios7-pricetag"></i> <span ng-show="spot.max != spot.min"><strong>{{ spot.min }} - </span>{{ spot.max }} {{ 'CURRENCY' | translate }}</strong></span></li>
       </ul>
     </div>
   </div>
