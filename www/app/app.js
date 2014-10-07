@@ -90,26 +90,21 @@ var app;
     'use strict';
 
     var HomeCtrl = (function () {
-        function HomeCtrl($scope, $http, $location, $window, $resource, $timeout, offlineService, geoService) {
+        function HomeCtrl($scope, $location, $window, offlineService, geoService, spotService) {
             var _this = this;
-            this.offset = 0;
             this.radius = 3;
             this.lat = 0;
             this.lon = 0;
             this.choose = 0;
             this.phrase = null;
-            this.spots = new Array();
-            this.loading = false;
-            this.showLoad = false;
             this.scope = $scope;
             this.scope.vm = this;
-            this.http = $http;
             this.location = $location;
             this.window = $window;
-            this.resource = $resource;
-            this.timeout = $timeout;
             this.offlineService = offlineService;
             this.geoService = geoService;
+            this.spotService = spotService;
+            this.cities = CITIES;
 
             this.geoService.current().then(function (data) {
                 _this.lat = data.coords.latitude;
@@ -120,17 +115,16 @@ var app;
             this.window.onscroll = function (ev) {
                 var height = $(window).innerHeight() + $(window).scrollTop();
                 var doc = $(document).height();
-                if ((height + 200 >= doc) && _this.showLoad) {
+                if ((height + 200 >= doc) && _this.spotService.showLoad) {
                     if (_this.choose == 0)
-                        _this.loadNearby();
+                        _this.spotService.loadNearby(_this.lat, _this.lon, _this.radius);
                     else
-                        _this.loadByCity();
+                        _this.spotService.loadByCity(_this.phrase);
                 }
             };
         }
         HomeCtrl.prototype.reset = function () {
-            this.offset = 0;
-            this.spots = new Array();
+            this.spotService.reset();
             if (this.choose == 0)
                 this.loadNearby();
             else
@@ -141,67 +135,20 @@ var app;
             this.radius = parseInt(this.radius.toString());
         };
 
-        HomeCtrl.prototype.loadByCity = function () {
-            var _this = this;
-            this.loading = true;
-            this.http.get(jsRoutes.controllers.Application.findByCity(this.phrase, this.offset).absoluteURL()).success(function (data, status) {
-                _this.spots = _this.spots.concat(data);
-                _this.offset += 10;
-                _this.loading = false;
-                _this.offlineService.setOnline();
-                _this.saveOffline();
-                if (_this.spots.length == _this.offset)
-                    _this.showLoad = true;
-            }).error(function (data, status) {
-                _this.loading = false;
-                _this.offlineService.setOffline();
-                _this.loadOffline();
-            });
-        };
-
-        HomeCtrl.prototype.loadNearby = function () {
-            var _this = this;
-            this.loading = true;
-            this.http.get(jsRoutes.controllers.Application.findNearby(this.lat, this.lon, this.radius * 1000, this.offset).absoluteURL()).success(function (data, status) {
-                _this.spots = _this.spots.concat(data);
-                _this.offset += 10;
-                _this.loading = false;
-                _this.offlineService.setOnline();
-                _this.saveOffline();
-                if (_this.spots.length == _this.offset)
-                    _this.showLoad = true;
-            }).error(function (data, status) {
-                _this.loading = false;
-                _this.offlineService.setOffline();
-                _this.loadOffline();
-            });
-        };
-
         HomeCtrl.prototype.redirect = function (id) {
             this.location.path('/app/spot/' + id);
         };
 
-        HomeCtrl.prototype.loadOffline = function () {
-            var _this = this;
-            this.showLoad = false;
-            for (var i = 0; i < 10; i++) {
-                var spot = localforage.getItem('spot-' + i, function (spot) {
-                    if (spot)
-                        _this.timeout(function () {
-                            return _this.spots.push(spot);
-                        });
-                });
-            }
+        HomeCtrl.prototype.loadByCity = function () {
+            this.spotService.loadByCity(this.phrase);
         };
 
-        HomeCtrl.prototype.saveOffline = function () {
-            this.spots.forEach(function (elem, index, array) {
-                localforage.setItem("spot-" + index, elem);
-            });
+        HomeCtrl.prototype.loadNearby = function () {
+            this.spotService.loadNearby(this.lat, this.lon, this.radius);
         };
         HomeCtrl.$inject = [
-            '$scope', '$http', '$location', '$window',
-            '$resource', '$timeout', 'offlineService', 'geoService'];
+            '$scope', '$location', '$window',
+            'offlineService', 'geoService', 'spotService'];
         return HomeCtrl;
     })();
     app.HomeCtrl = HomeCtrl;
@@ -214,7 +161,6 @@ var app;
 
     var EditSpotCtrl = (function () {
         function EditSpotCtrl($scope, $stateParams, $http, $location, $window, $timeout, geoService, offlineService) {
-            var _this = this;
             this.media = new Array();
             this.pricing = new Array();
             this.loading = false;
@@ -240,10 +186,6 @@ var app;
             } else {
                 this.location.path('/app/offline');
             }
-
-            this.scope.$on('geocode', function (e, address, error) {
-                return _this.geocodeFinished(address, error);
-            });
         }
         EditSpotCtrl.prototype.addMedia = function () {
             this.media.push(new app.Media());
@@ -263,7 +205,10 @@ var app;
 
         EditSpotCtrl.prototype.showSummary = function () {
             this.loading = true;
-            this.geoService.geocode(this.spot.address);
+            if (this.edit)
+                this.save();
+            else
+                this.insert();
         };
 
         EditSpotCtrl.prototype.toggleInfrastructure = function (elem) {
@@ -274,19 +219,6 @@ var app;
             } else {
                 this.spot.infrastructure.push(elem);
                 return true;
-            }
-        };
-
-        EditSpotCtrl.prototype.geocodeFinished = function (address, error) {
-            if (error) {
-                this.window.alert(error);
-                this.loading = false;
-            } else if (this.edit) {
-                this.spot.address = address;
-                this.save();
-            } else {
-                this.spot.address = address;
-                this.insert();
             }
         };
 
@@ -380,10 +312,33 @@ var app;
                     return _this.pointSet = true;
                 });
 
+                _this.geocode(event.latLng);
+
                 if (marker == null) {
                     marker = new google.maps.Marker({ position: event.latLng, map: map });
                 } else {
                     marker.setPosition(event.latLng);
+                }
+            });
+        };
+
+        EditSpotCtrl.prototype.geocode = function (latlng) {
+            var _this = this;
+            var geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    if (results.length > 0) {
+                        results[0].address_components.forEach(function (elem, index, array) {
+                            elem.types.forEach(function (tpe, idx, arr) {
+                                if (tpe == "postal_code")
+                                    _this.spot.address.zip = parseInt(elem.long_name);
+                                if (tpe == "locality")
+                                    _this.spot.address.city = elem.long_name;
+                            });
+                        });
+                    } else {
+                        _this.pointSet = false;
+                    }
                 }
             });
         };
@@ -577,6 +532,86 @@ var app;
     app.OfflineService = OfflineService;
 })(app || (app = {}));
 /// <reference path='../_all.ts' />
+var app;
+(function (app) {
+    'use strict';
+
+    var SpotService = (function () {
+        function SpotService($rootScope, $http, $timeout, offlineService) {
+            this.spots = new Array();
+            this.loading = false;
+            this.showLoad = false;
+            this.offset = 0;
+            this.rootScope = $rootScope;
+            this.http = $http;
+            this.timeout = $timeout;
+            this.offlineService = offlineService;
+        }
+        SpotService.prototype.loadByCity = function (phrase) {
+            var _this = this;
+            this.loading = true;
+            this.http.get(jsRoutes.controllers.Application.findByCity(phrase, this.offset).absoluteURL()).success(function (data, status) {
+                _this.spots = _this.spots.concat(data);
+                _this.offset += 10;
+                _this.loading = false;
+                _this.offlineService.setOnline();
+                _this.saveOffline();
+                if (_this.spots.length == _this.offset)
+                    _this.showLoad = true;
+            }).error(function (data, status) {
+                _this.loading = false;
+                _this.offlineService.setOffline();
+                _this.loadOffline();
+            });
+        };
+
+        SpotService.prototype.loadNearby = function (lat, lon, radius) {
+            var _this = this;
+            this.loading = true;
+            this.http.get(jsRoutes.controllers.Application.findNearby(lat, lon, radius * 1000, this.offset).absoluteURL()).success(function (data, status) {
+                _this.spots = _this.spots.concat(data);
+                _this.offset += 10;
+                _this.loading = false;
+                _this.offlineService.setOnline();
+                _this.saveOffline();
+                if (_this.spots.length == _this.offset)
+                    _this.showLoad = true;
+            }).error(function (data, status) {
+                _this.loading = false;
+                _this.offlineService.setOffline();
+                _this.loadOffline();
+            });
+        };
+
+        SpotService.prototype.reset = function () {
+            this.offset = 0;
+            this.spots = new Array();
+        };
+
+        SpotService.prototype.loadOffline = function () {
+            var _this = this;
+            this.showLoad = false;
+            for (var i = 0; i < 10; i++) {
+                var spot = localforage.getItem('spot-' + i, function (spot) {
+                    if (spot)
+                        _this.timeout(function () {
+                            return _this.spots.push(spot);
+                        });
+                });
+            }
+        };
+
+        SpotService.prototype.saveOffline = function () {
+            this.spots.forEach(function (elem, index, array) {
+                localforage.setItem("spot-" + index, elem);
+            });
+        };
+        SpotService.$inject = ['$rootScope', '$http', '$timeout', 'offlineService'];
+        return SpotService;
+    })();
+    app.SpotService = SpotService;
+})(app || (app = {}));
+/// <reference path='../_all.ts' />
 
 var app;
 (function (app) {
@@ -620,7 +655,6 @@ var app;
 
         ImgUpload.prototype.handleUpload = function (files, element) {
             var _this = this;
-            console.log(files);
             this.loading = true;
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
@@ -636,7 +670,7 @@ var app;
                     _this.myScope.picture.url = url;
                     _this.loading = false;
                 }).error(function () {
-                    return _this.window.alert("Unfortunately an error occurred. Please try again later.");
+                    return console.log("error on img upload");
                 });
             }
         };
@@ -768,6 +802,7 @@ var app;
 
     ub.service('geoService', app.GeoService);
     ub.service('offlineService', app.OfflineService);
+    ub.service('spotService', app.SpotService);
 
     ub.directive('imgUpload', app.ImgUpload.prototype.injection());
     ub.directive('widget', app.Widget.prototype.injection());
@@ -877,6 +912,7 @@ var app;
 /// <reference path='controllers/SpotCtrl.ts' />
 /// <reference path='services/GeoService.ts' />
 /// <reference path='services/OfflineService.ts' />
+/// <reference path='services/SpotService.ts' />
 /// <reference path='directives/ImgUpload.ts' />
 /// <reference path='directives/Widget.ts' />
 /// <reference path='directives/WidgetImg.ts' />

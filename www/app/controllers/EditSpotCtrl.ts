@@ -1,7 +1,7 @@
 /// <reference path='../_all.ts' />
 
 declare var jsRoutes: any 
-declare var INFRASTRUCTURE: any
+declare var INFRASTRUCTURE: Array<string>
 declare var google: any
 
 module app {
@@ -63,7 +63,6 @@ module app {
                 this.location.path('/app/offline')
             }
 
-            this.scope.$on('geocode', (e: any, address: app.Address, error: string) => this.geocodeFinished(address, error))
         }
 
         public addMedia(): void {            
@@ -84,7 +83,10 @@ module app {
 
         public showSummary(): void {
             this.loading = true
-            this.geoService.geocode(this.spot.address)
+            if(this.edit) 
+                this.save()
+            else 
+                this.insert()
         }
 
         public toggleInfrastructure(elem: string): boolean {
@@ -95,19 +97,6 @@ module app {
             } else { 
                 this.spot.infrastructure.push(elem)
                 return true
-            }
-        }
-
-        private geocodeFinished(address: app.Address, error: string): void {
-            if(error) {
-                this.window.alert(error)
-                this.loading = false
-            } else if(this.edit) {
-                this.spot.address = address
-                this.save()
-            } else {
-                this.spot.address = address
-                this.insert()
             }
         }
 
@@ -204,12 +193,34 @@ module app {
                 this.spot.address.position.lon = lng
                 this.timeout(() => this.pointSet = true)
 
+                this.geocode(event.latLng)
+
                 if(marker == null) {
                     marker = new google.maps.Marker({position: event.latLng, map: map})
                 } else {
                     marker.setPosition(event.latLng)
                 }
                 
+            })
+        }
+
+        private geocode(latlng: any): void {
+            var geocoder = new google.maps.Geocoder()
+            geocoder.geocode({'latLng': latlng}, (results: any, status: any) => {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    if(results.length > 0) {
+                        results[0].address_components.forEach((elem, index, array) => {
+                            elem.types.forEach((tpe, idx, arr) => {
+                                if(tpe == "postal_code")
+                                    this.spot.address.zip = parseInt(elem.long_name)
+                                if(tpe == "locality")
+                                    this.spot.address.city = elem.long_name
+                            })
+                        })
+                    } else {
+                        this.pointSet = false
+                    }
+                }
             })
         }
     }

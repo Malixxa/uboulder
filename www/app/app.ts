@@ -31,6 +31,7 @@ module app {
 
     ub.service('geoService', GeoService)
     ub.service('offlineService', OfflineService)
+    ub.service('spotService', SpotService)
 
     ub.directive('imgUpload', ImgUpload.prototype.injection())
     ub.directive('widget', Widget.prototype.injection())

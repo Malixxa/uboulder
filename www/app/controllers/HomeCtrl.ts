@@ -1,11 +1,10 @@
 /// <reference path='../_all.ts' />
 
 declare var jsRoutes: any 
+declare var CITIES: Array<string>
 
 module app {
     'use strict'
-
-    declare var localforage: lf.ILocalForage<app.Spot>
 
     export interface IHomeScope extends ng.IScope {
     	vm: HomeCtrl
@@ -14,43 +13,38 @@ module app {
 
     export class HomeCtrl {
       
-        static $inject: Array<string> = ['$scope','$http','$location','$window',
-            '$resource','$timeout','offlineService','geoService'];
+        static $inject: Array<string> = ['$scope','$location','$window',
+            'offlineService','geoService','spotService'];
+
+        private cities: Array<string>
 
         private scope: app.IHomeScope
-        private http: ng.IHttpService
         private location: ng.ILocationService
         private window: ng.IWindowService
-        private resource: any
-        private timeout: ng.ITimeoutService
 
         private offlineService: app.OfflineService
         private geoService: app.GeoService
+        private spotService: app.SpotService
 
-        private offset: number = 0
         private radius: number = 3
         private lat: number = 0
         private lon: number = 0
         private choose: number = 0
         private phrase: string = null
+        
 
-        private spots: Array<Spot> = new Array<Spot>()
-        private loading: boolean = false
-        private showLoad: boolean = false
-
-        constructor($scope: app.IHomeScope, $http: ng.IHttpService, 
-            $location: ng.ILocationService, $window: ng.IWindowService,
-            $resource: any, $timeout: ng.ITimeoutService, 
-            offlineService: app.OfflineService, geoService: app.GeoService) {  
+        constructor($scope: app.IHomeScope, 
+            $location: ng.ILocationService, $window: ng.IWindowService, 
+            offlineService: app.OfflineService, 
+            geoService: app.GeoService, spotService: app.SpotService) {  
         	this.scope = $scope
         	this.scope.vm = this 
-            this.http = $http
             this.location = $location
             this.window = $window
-            this.resource = $resource
-            this.timeout = $timeout
             this.offlineService = offlineService
             this.geoService = geoService
+            this.spotService = spotService
+            this.cities = CITIES
 
             this.geoService.current().then((data: any) => {
                 this.lat = data.coords.latitude 
@@ -61,18 +55,17 @@ module app {
             this.window.onscroll = (ev: any) => {
                 var height: number = <number>$(window).innerHeight() + <number>$(window).scrollTop()
                 var doc: number = <number>$(document).height()
-                if((height + 200 >= doc) && this.showLoad) {
+                if((height + 200 >= doc) && this.spotService.showLoad) {
                     if(this.choose == 0)
-                        this.loadNearby()
+                        this.spotService.loadNearby(this.lat, this.lon, this.radius)
                     else
-                        this.loadByCity()
+                        this.spotService.loadByCity(this.phrase)
                 }
             }
         }
 
         public reset(): void {
-            this.offset = 0
-            this.spots = new Array<Spot>()
+            this.spotService.reset()
             if(this.choose == 0)
                 this.loadNearby()
             else
@@ -83,69 +76,19 @@ module app {
             this.radius = parseInt(this.radius.toString())
         }
 
-        public loadByCity(): void {
-            this.loading = true
-            this.http.get(jsRoutes.controllers.Application.findByCity(this.phrase, this.offset).absoluteURL()).success(
-                (data: any, status: any) => {
-                    this.spots = this.spots.concat(<Array<Spot>>data)
-                    this.offset += 10
-                    this.loading = false
-                    this.offlineService.setOnline()
-                    this.saveOffline()
-                    if(this.spots.length == this.offset)
-                        this.showLoad = true
-                }
-            ).error(
-                (data: any, status: any) => {
-                    this.loading = false
-                    this.offlineService.setOffline()
-                    this.loadOffline()
-                }
-            )
-        }
-
-        public loadNearby(): void {
-            this.loading = true
-        	this.http.get(jsRoutes.controllers.Application.findNearby(this.lat, this.lon, this.radius*1000, this.offset).absoluteURL()).success(
-        		(data: any, status: any) => {
-        			this.spots = this.spots.concat(<Array<Spot>>data)
-        			this.offset += 10
-                    this.loading = false
-                    this.offlineService.setOnline()
-                    this.saveOffline()
-                    if(this.spots.length == this.offset)
-                        this.showLoad = true
-        		}
-        	).error(
-        		(data: any, status: any) => {
-                    this.loading = false
-                    this.offlineService.setOffline()
-                    this.loadOffline()
-                }
-        	)
-        }
-
         public redirect(id: string): void {
             this.location.path('/app/spot/'+id)
         }
 
-        private loadOffline(): void {
-            this.showLoad = false
-            for(var i: number = 0; i < 10; i++) {
-                var spot = localforage.getItem('spot-'+i, (spot: Spot) => {
-                    if(spot)
-                        this.timeout(() => this.spots.push(spot))    
-                });
-            }
+        public loadByCity(): void {
+            this.spotService.loadByCity(this.phrase)
         }
 
-        private saveOffline(): void {
-            this.spots.forEach(
-                (elem: Spot, index: number, array: Array<Spot>) => {
-                    localforage.setItem("spot-"+index, elem)
-                }
-            )
+        public loadNearby(): void {
+            this.spotService.loadNearby(this.lat, this.lon, this.radius)
         }
+
+
     }
 
 }

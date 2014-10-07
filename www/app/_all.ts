@@ -9,6 +9,7 @@
 
 /// <reference path='services/GeoService.ts' />
 /// <reference path='services/OfflineService.ts' />
+/// <reference path='services/SpotService.ts' />
 
 /// <reference path='directives/ImgUpload.ts' />
 /// <reference path='directives/Widget.ts' />

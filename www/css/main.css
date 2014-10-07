@@ -178,3 +178,14 @@ h1.ad-detail, h2.ad-detail {
 .img-thumb-active {
 	outline: 2px solid orange;
 }
+
+#mobfox-wrapper {
+	height: 30px;
+	width: 100%;
+}
+
+#mobfox {
+	position: absolute;
+	display: none;
+	z-index: 999;
+}

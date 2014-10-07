@@ -7,7 +7,7 @@
     <div class="alert alert-danger text-center" id="offline" onclick="location.reload();">
         <i class="ion-alert-circled"></i> <strong>{{ 'OFFLINE_TAP' | translate }}</strong>
     </div>
-    
+
     <div class="jumbotron">
       <div>
         <div class="btn-group btn-group-justified">
@@ -30,7 +30,10 @@
           <button class="btn btn-find" type="submit" ng-click="vm.reset()"><i class="ion-search"></i> {{'HOME_FIND' | translate }}</button>
         </form>
         <form ng-show="vm.choose == 1" class="form-inline search" name="findForm">  
-          <input type="text" name="city" class="form-control" ng-model="vm.phrase" required>    
+          <input type="text" name="city" class="form-control" ng-model="vm.phrase" list="cities" autocomplete="off" required id="city-search">  
+          <datalist id="cities">
+            <option ng-repeat="city in vm.cities" value="{{ city | translate }}">
+          </datalist>  
           <button class="btn btn-find btn-find-city" type="submit" ng-click="vm.reset()" ng-disabled="vm.phrase < 1"><i class="ion-search"></i> {{'HOME_FIND' | translate }}</button>
         </form>
       </div>
@@ -39,12 +42,12 @@
       </div>
     </div>
 
-    <widget ng-repeat="spot in vm.spots" spot="spot" ng-click="vm.redirect(spot.id)"></widget>
-    <p ng-if="(vm.spots.length == 0) && !vm.loading" class="text-center">
+    <widget ng-repeat="spot in vm.spotService.spots" spot="spot" ng-click="vm.redirect(spot.id)"></widget>
+    <p ng-if="(vm.spotService.spots.length == 0) && !vm.spotService.loading" class="text-center">
       {{ 'HOME_NO_ENTRIES' | translate }}
     </p>
-    <div class="loading" ng-show="vm.loading"><i class="ion-refreshing"></i></div>
-    <p class="text-center" ng-show="vm.showLoad">
+    <div class="loading" ng-show="vm.spotService.loading"><i class="ion-refreshing"></i></div>
+    <p class="text-center" ng-show="vm.spotService.showLoad">
       <button ng-show="vm.choose == 0" ng-click="vm.loadNearby()" class="btn btn-lg"><i class="ion-refresh"></i> {{ 'HOME_LOAD' | translate }}</button>
       <button ng-show="vm.choose == 1" ng-click="vm.loadByCity()" class="btn btn-lg"><i class="ion-refresh"></i> {{ 'HOME_LOAD' | translate }}</button>
     </p>

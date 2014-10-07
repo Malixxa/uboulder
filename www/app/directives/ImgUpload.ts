@@ -56,7 +56,6 @@ module app {
         }
 
         private handleUpload(files: any, element: JQuery) {
-            console.log(files)
             this.loading = true
             for (var i = 0; i < files.length; i++) {
                 var file = files[i]
@@ -74,7 +73,7 @@ module app {
                         this.loading = false
                     }
                 ).error(
-                    () => this.window.alert("Unfortunately an error occurred. Please try again later.")
+                    () => console.log("error on img upload")
                 )
             }
         }

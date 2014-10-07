@@ -1,5 +1,5 @@
 var jsRoutes = {}; (function(_root){
-var SERVER = "localhost";
+var SERVER = "178.62.15.6";
 var _nS = function(c,f,b){var e=c.split(f||"."),g=b||_root,d,a;for(d=0,a=e.length;d<a;d++){g=g[e[d]]=g[e[d]]||{}}return g}
 var _qS = function(items){var qs = ''; for(var i=0;i<items.length;i++) {if(items[i]) qs += (qs ? '&' : '') + items[i]}; return qs ? ('?' + qs) : ''}
 var _s = function(p,s){return p+((s===true||(s&&s.secure))?'s':'')+'://'}
