@@ -12,12 +12,13 @@ module app {
         public spots: Array<Spot> = new Array<Spot>()
         public loading: boolean = false
         public showLoad: boolean = false
+        public offset: number = 0
         
         private rootScope: ng.IRootScopeService
         private http: ng.IHttpService
         private timeout: ng.ITimeoutService
         private offlineService: app.OfflineService
-        private offset: number = 0
+        
         
 
     	constructor($rootScope: ng.IRootScopeService, $http: ng.IHttpService,

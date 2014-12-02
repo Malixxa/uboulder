@@ -1,6 +1,10 @@
 /// <reference path='typings/tsd.d.ts' />
 
-/// <reference path='models/Spot.ts' />'
+/// <reference path='models/Position.ts' />
+/// <reference path='models/Address.ts' />
+/// <reference path='models/Media.ts' />
+/// <reference path='models/Pricing.ts' />
+/// <reference path='models/Spot.ts' />
 
 /// <reference path='controllers/MenuCtrl.ts' />
 /// <reference path='controllers/HomeCtrl.ts' />

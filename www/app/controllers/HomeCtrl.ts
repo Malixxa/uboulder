@@ -55,7 +55,8 @@ module app {
             this.window.onscroll = (ev: any) => {
                 var height: number = <number>$(window).innerHeight() + <number>$(window).scrollTop()
                 var doc: number = <number>$(document).height()
-                if((height + 200 >= doc) && this.spotService.showLoad) {
+                if((height + 200 >= doc) && this.spotService.showLoad && 
+                    !this.spotService.loading && this.spotService.offset >= 10) {
                     if(this.choose == 0)
                         this.spotService.loadNearby(this.lat, this.lon, this.radius)
                     else

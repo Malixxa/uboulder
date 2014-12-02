@@ -2,7 +2,7 @@
   <ion-nav-buttons side="left">
     <button menu-toggle="left"class="button button-icon icon ion-navicon"></button>
   </ion-nav-buttons>
-  <ion-content class="has-header">
+  <ion-content class="has-header" overflow-scroll="true">
     
     <div class="alert alert-danger text-center" id="offline" onclick="location.reload();">
         <i class="ion-alert-circled"></i> <strong>{{ 'OFFLINE_TAP' | translate }}</strong>
@@ -19,7 +19,10 @@
           </div>
         </div>
         <form ng-show="vm.choose == 0" class="form-inline search">
-          <div class="range-number km">{{ 'HOME_RADIUS' | translate }}:</div>  <input type="number" class="form-control" ng-model="vm.radius">
+          <div class="range-number km">{{ 'HOME_RADIUS' | translate }}:</div> 
+          <label class="item item-input">
+            <input type="number" placeholder="First Name" ng-model="vm.radius">
+          </label> 
           
           <div id="radius">
             <span class="range-number">0</span>
@@ -27,18 +30,14 @@
             <span class="range-number">25</span>
           </div>
 
-          <button class="btn btn-find" type="submit" ng-click="vm.reset()"><i class="ion-search"></i> {{'HOME_FIND' | translate }}</button>
+          <button class="button button-stable button-block" type="submit" ng-click="vm.reset()"><i class="ion-search"></i> {{'HOME_FIND' | translate }}</button>
         </form>
-        <form ng-show="vm.choose == 1" class="form-inline search" name="findForm">  
-          <input type="text" name="city" class="form-control" ng-model="vm.phrase" list="cities" autocomplete="off" required id="city-search">  
-          <datalist id="cities">
-            <option ng-repeat="city in vm.cities" value="{{ city | translate }}">
-          </datalist>  
-          <button class="btn btn-find btn-find-city" type="submit" ng-click="vm.reset()" ng-disabled="vm.phrase < 1"><i class="ion-search"></i> {{'HOME_FIND' | translate }}</button>
+        <form ng-show="vm.choose == 1" class="form-inline search" name="findForm"> 
+          <label class="item item-input">         
+            <input type="text" name="city" ng-model="vm.phrase" required id="city-search">  
+          </label> 
+          <button class="button button-stable button-block" type="submit" ng-click="vm.reset()" ng-disabled="vm.phrase < 1"><i class="ion-search"></i> {{'HOME_FIND' | translate }}</button>
         </form>
-      </div>
-      <div class="cc">
-        "<a href="http://commons.wikimedia.org/wiki/File:Climbing_in_St._Lorenz_-_Wachau,_Austria.jpg#mediaviewer/File:Climbing_in_St._Lorenz_-_Wachau,_Austria.jpg">Climbing in St. Lorenz - Wachau, Austria</a>" by <a rel="nofollow" class="external text" href="http://www.flickr.com/people/86236226@N00">gego2605</a> - <a href="//commons.wikimedia.org/wiki/Flickr" title="Flickr" class="mw-redirect">Flickr</a>: <a rel="nofollow" class="external text" href="http://flickr.com/photos/86236226@N00/1277878607">nt-gummizwuftel</a>. Licensed under <a href="http://creativecommons.org/licenses/by-sa/2.0" title="Creative Commons Attribution-Share Alike 2.0">CC BY-SA 2.0</a> via <a href="//commons.wikimedia.org/wiki/">Wikimedia Commons</a>.
       </div>
     </div>
 

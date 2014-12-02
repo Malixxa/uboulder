@@ -66,7 +66,7 @@ module app {
         }
 
         public addMedia(): void {            
-            this.media.push(new Media())
+            this.media.push(new Media(null))
         }
 
         public deleteMedia(index: number): void {
@@ -150,8 +150,8 @@ module app {
 
         private createSpot(): void {
             this.edit = false
-            this.spot = new Spot()
-            this.spot.address = new Address()
+            this.spot = new Spot(null,false,null,new Array<Media>(), new Array<Pricing>(), new Array<string>())
+            this.spot.address = new Address(new Position(0,0),0,null)
             this.createMap()
         }
 

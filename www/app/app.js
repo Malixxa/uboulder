@@ -1,47 +1,32 @@
 /// <reference path='../_all.ts' />
+/**
+* ATTENTION: auto generated file
+* changes are overwritten on next run
+**/
 var app;
 (function (app) {
     'use strict';
 
-    var Spot = (function () {
-        function Spot(id, title, description, active, address, media, pricing, infrastructure) {
-            if (typeof id === "undefined") { id = null; }
-            if (typeof title === "undefined") { title = null; }
-            if (typeof description === "undefined") { description = null; }
-            if (typeof active === "undefined") { active = false; }
-            if (typeof address === "undefined") { address = new Address(); }
-            if (typeof media === "undefined") { media = new Array(); }
-            if (typeof pricing === "undefined") { pricing = new Array(); }
-            if (typeof infrastructure === "undefined") { infrastructure = new Array(); }
-            this.id = id;
-            this.title = title;
-            this.description = description;
-            this.active = active;
-            this.address = address;
-            this.media = media;
-            this.pricing = pricing;
-            this.infrastructure = infrastructure;
-        }
-        return Spot;
-    })();
-    app.Spot = Spot;
-
     var Position = (function () {
         function Position(lat, lon) {
-            if (typeof lat === "undefined") { lat = 0; }
-            if (typeof lon === "undefined") { lon = 0; }
             this.lat = lat;
             this.lon = lon;
         }
         return Position;
     })();
     app.Position = Position;
+})(app || (app = {}));
+/// <reference path='../_all.ts' />
+/**
+* ATTENTION: auto generated file
+* changes are overwritten on next run
+**/
+var app;
+(function (app) {
+    'use strict';
 
     var Address = (function () {
         function Address(position, zip, city) {
-            if (typeof position === "undefined") { position = new Position(); }
-            if (typeof zip === "undefined") { zip = 0; }
-            if (typeof city === "undefined") { city = null; }
             this.position = position;
             this.zip = zip;
             this.city = city;
@@ -49,26 +34,66 @@ var app;
         return Address;
     })();
     app.Address = Address;
+})(app || (app = {}));
+/// <reference path='../_all.ts' />
+/**
+* ATTENTION: auto generated file
+* changes are overwritten on next run
+**/
+var app;
+(function (app) {
+    'use strict';
 
     var Media = (function () {
         function Media(url) {
-            if (typeof url === "undefined") { url = null; }
             this.url = url;
         }
         return Media;
     })();
     app.Media = Media;
+})(app || (app = {}));
+/// <reference path='../_all.ts' />
+/**
+* ATTENTION: auto generated file
+* changes are overwritten on next run
+**/
+var app;
+(function (app) {
+    'use strict';
 
     var Pricing = (function () {
         function Pricing(description, amount) {
-            if (typeof description === "undefined") { description = null; }
-            if (typeof amount === "undefined") { amount = 0; }
             this.description = description;
             this.amount = amount;
         }
         return Pricing;
     })();
     app.Pricing = Pricing;
+})(app || (app = {}));
+/// <reference path='../_all.ts' />
+/**
+* ATTENTION: auto generated file
+* changes are overwritten on next run
+**/
+var app;
+(function (app) {
+    'use strict';
+
+    var Spot = (function () {
+        function Spot(title, active, address, media, pricing, infrastructure, id, description, website) {
+            this.title = title;
+            this.active = active;
+            this.address = address;
+            this.media = media;
+            this.pricing = pricing;
+            this.infrastructure = infrastructure;
+            this.id = id;
+            this.description = description;
+            this.website = website;
+        }
+        return Spot;
+    })();
+    app.Spot = Spot;
 })(app || (app = {}));
 /// <reference path='../_all.ts' />
 var app;
@@ -115,7 +140,7 @@ var app;
             this.window.onscroll = function (ev) {
                 var height = $(window).innerHeight() + $(window).scrollTop();
                 var doc = $(document).height();
-                if ((height + 200 >= doc) && _this.spotService.showLoad) {
+                if ((height + 200 >= doc) && _this.spotService.showLoad && !_this.spotService.loading && _this.spotService.offset >= 10) {
                     if (_this.choose == 0)
                         _this.spotService.loadNearby(_this.lat, _this.lon, _this.radius);
                     else
@@ -188,7 +213,7 @@ var app;
             }
         }
         EditSpotCtrl.prototype.addMedia = function () {
-            this.media.push(new app.Media());
+            this.media.push(new app.Media(null));
         };
 
         EditSpotCtrl.prototype.deleteMedia = function (index) {
@@ -269,8 +294,8 @@ var app;
 
         EditSpotCtrl.prototype.createSpot = function () {
             this.edit = false;
-            this.spot = new app.Spot();
-            this.spot.address = new app.Address();
+            this.spot = new app.Spot(null, false, null, new Array(), new Array(), new Array());
+            this.spot.address = new app.Address(new app.Position(0, 0), 0, null);
             this.createMap();
         };
 
@@ -905,7 +930,11 @@ var app;
         }]);
 })(app || (app = {}));
 /// <reference path='typings/tsd.d.ts' />
-/// <reference path='models/Spot.ts' />'
+/// <reference path='models/Position.ts' />
+/// <reference path='models/Address.ts' />
+/// <reference path='models/Media.ts' />
+/// <reference path='models/Pricing.ts' />
+/// <reference path='models/Spot.ts' />
 /// <reference path='controllers/MenuCtrl.ts' />
 /// <reference path='controllers/HomeCtrl.ts' />
 /// <reference path='controllers/EditSpotCtrl.ts' />

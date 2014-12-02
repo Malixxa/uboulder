@@ -2,7 +2,7 @@
   <ion-nav-buttons side="left">
     <button menu-toggle="left"class="button button-icon icon ion-navicon"></button>
   </ion-nav-buttons>
-  <ion-content class="has-header">
+  <ion-content class="has-header" overflow-scroll="true">
 
     <div class="row">
       <div class="col-xs-20">
@@ -30,17 +30,21 @@
       </div>
     </div>
 
-    <form name="spotForm">
+    <form name="spotForm" id="newSpot">
 
     <div class="row">
       <div class="col-xs-20">
-        <div class="form-group">
-          <input type="text" name="title" class="disable form-control" maxlength="50" placeholder="{{ 'NEW_TITLE' | translate }} *" ng-model="vm.spot.title" required ng-disabled="vm.edit">
-        </div>
+        <label class="item item-input">
+          <input type="text" name="title" maxlength="50" placeholder="{{ 'NEW_TITLE' | translate }} *" ng-model="vm.spot.title" required ng-disabled="vm.edit">
+        </label>
 
-        <div class="form-group">
-          <textarea ng-model="vm.spot.description" name="description" rows="6" class="form-control" maxlength="500" placeholder="{{ 'NEW_DESCRIPTION' | translate }} *" ngMinlength="5" ngMaxlength="500" required ng-disabled="vm.edit"></textarea>
-        </div>
+        <label class="item item-input">
+          <textarea ng-model="vm.spot.description" name="description" rows="6" maxlength="500" placeholder="{{ 'NEW_DESCRIPTION' | translate }}" ngMinlength="5" ngMaxlength="500" ng-disabled="vm.edit"></textarea>
+        </label>
+
+        <label class="item item-input">
+          <input type="text" name="title" maxlength="50" placeholder="{{ 'NEW_WEBSITE' | translate }}" ng-model="vm.spot.website" required ng-disabled="vm.edit">
+        </label>
         
         <p class="pull-right" ng-if="!vm.edit">  
           <span ng:bind="500 - vm.spot.description.length"></span> {{'NEW_CHAR' | translate}}
@@ -73,19 +77,23 @@
     </div>
 
     <div ng-repeat="picture in vm.media" class="row form-group">
-      <div ng-if="(picture.url == null)" class="col-xs-10">
-        <img-upload></img-upload>
+      <div class="row">
+        <div ng-if="(picture.url == null)" class="col-xs-20">
+          <img-upload></img-upload>
+        </div>
+        <div ng-if="(picture.url != null)" class="col-xs-20">
+          <img ng-src="{{ picture.url }}/128/128/crop" alt="vm.spot.title">
+        </div>
       </div>
-      <div ng-if="(picture.url != null)" class="col-xs-10">
-        <img ng-src="{{ picture.url }}/128/128/crop" alt="vm.spot.title">
-      </div>
-      <div class="col-xs-10">
-        <button type="button" class="btn btn-warning" ng-click="vm.deleteMedia($index)"><i class="ion-minus-circled"></i> {{'NEW_REMOVE' | translate}}</button>                  
+      <div class="row">
+        <div class="col-xs-20">
+          <button type="button" class="button button-energized button-block" ng-click="vm.deleteMedia($index)"><i class="ion-minus-circled"></i> {{'NEW_REMOVE' | translate}}</button>                  
+        </div>
       </div>
     </div>
     <div class="row form-group">
       <div class="col-xs-12">
-        <button class="btn" ng-click="vm.addMedia()"><i class="ion-plus-circled"></i> {{'NEW_ADD_PICTURE' | translate}}</button>
+        <button class="button button-stable" ng-click="vm.addMedia()"><i class="ion-plus-circled"></i> {{'NEW_ADD_PICTURE' | translate}}</button>
       </div>
     </div>
 
@@ -122,13 +130,13 @@
         </div>
       </div>
       <div class="col-xs-12">
-        <button type="button" class="btn btn-warning" ng-click="vm.deletePricing($index)"><i class="ion-minus-circled"></i> {{'NEW_REMOVE' | translate}}</button>
+        <button type="button" class="button button-energized button-block" ng-click="vm.deletePricing($index)"><i class="ion-minus-circled"></i> {{'NEW_REMOVE' | translate}}</button>
       </div>
     </div>
 
     <div class="row form-group">
       <div class="col-xs-10">
-        <button class="btn" ng-click="vm.addPricing()"><i class="ion-plus-circled"></i> {{'NEW_ADD_PRODUCT' | translate}}</button>
+        <button class="button button-stable" ng-click="vm.addPricing()"><i class="ion-plus-circled"></i> {{'NEW_ADD_PRODUCT' | translate}}</button>
       </div>
     </div>
 
@@ -139,12 +147,15 @@
     </div>
 
     <div class="row">
-      <div class="form-group">
-        <div class="col-xs-10 inf" ng-repeat="infrastructure in vm.infrastructure">
-          <label class="checkbox-inline">
-            <input type="checkbox" value="infrastructure" ng-checked="vm.spot.infrastructure.indexOf(infrastructure) > -1" ng-click="vm.toggleInfrastructure(infrastructure)"> {{ infrastructure | translate }}
-          </label>
-        </div>
+      <div class="form-group col-xs-15">
+        <ul class="list">
+          <li class="item item-checkbox" ng-repeat="infrastructure in vm.infrastructure">
+            <label class="checkbox checkbox-stable">
+              <input type="checkbox" value="infrastructure" ng-checked="vm.spot.infrastructure.indexOf(infrastructure) > -1" ng-click="vm.toggleInfrastructure(infrastructure)"> 
+            </label>
+            {{ infrastructure | translate }}
+          </li>
+        </ul>
       </div>
     </div>
 
@@ -169,7 +180,7 @@
 
     <div class="row">
       <div class="col-xs-20">
-        <input ng-click="vm.showSummary()" type="submit" class="btn btn-success pull-right btn-lg" ng-show="!vm.loading" ng-disabled="!spotForm.$valid || !vm.pointSet" value="{{'NEW_SAVE' | translate}}">
+        <input ng-click="vm.showSummary()" type="submit" class="button button-balanced pull-right btn-lg" ng-show="!vm.loading" ng-disabled="!spotForm.$valid || !vm.pointSet" value="{{'NEW_SAVE' | translate}}">
         <div class="loading pull-right" ng-show="vm.loading"><i class="ion-refreshing"></i></div>
       </div>
     </div>
